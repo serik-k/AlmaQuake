@@ -16,8 +16,8 @@ export function useQuakes() {
       const data = await getQuakes();
       setQuakes(data);
       setLastUpdate(new Date());
-    } catch (e: any) {
-      setError(e.message ?? 'Unknown error');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Unknown error');
     } finally {
       setLoading(false);
     }

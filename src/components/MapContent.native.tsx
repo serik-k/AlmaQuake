@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import MapView, { Circle, Marker, PROVIDER_DEFAULT } from 'react-native-maps';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import MapView, { Circle, Marker, UrlTile } from 'react-native-maps';
 import { useTranslation } from 'react-i18next';
-import { useQuakes } from '@/src/hooks/useQuakes';
 import { QuakeDetailSheet } from '@/src/components/QuakeDetailSheet';
 import type { Quake } from '@/src/api/quakes.api';
+
+interface Props {
+  quakes: Quake[];
+  loading: boolean;
+}
 
 const ALMATY = { latitude: 43.2565, longitude: 76.9286 };
 
@@ -15,9 +19,8 @@ function getMarkerColor(mag: number): string {
   return '#00E676';
 }
 
-export default function MapContent() {
+export default function MapContent({ quakes, loading }: Props) {
   const { t } = useTranslation();
-  const { quakes } = useQuakes();
   const [selected, setSelected] = useState<Quake | null>(null);
 
   return (
@@ -29,17 +32,22 @@ export default function MapContent() {
 
       <MapView
         style={styles.map}
-        provider={PROVIDER_DEFAULT}
         initialRegion={{
           ...ALMATY,
           latitudeDelta: 2.2,
           longitudeDelta: 2.2,
         }}
-        mapType="mutedStandard"
+        mapType="none"
         showsUserLocation
         showsCompass={false}
         showsScale={false}
       >
+        <UrlTile
+          urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maximumZ={19}
+          flipY={false}
+          tileSize={256}
+        />
         <Circle
           center={ALMATY}
           radius={100_000}
@@ -66,9 +74,9 @@ export default function MapContent() {
                 styles.quakeMarker,
                 {
                   backgroundColor: getMarkerColor(q.magnitude),
-                  width: Math.max(16, q.magnitude * 8),
-                  height: Math.max(16, q.magnitude * 8),
-                  borderRadius: Math.max(8, q.magnitude * 4),
+                  width: Math.max(16, (q.magnitude ?? 0) * 8),
+                  height: Math.max(16, (q.magnitude ?? 0) * 8),
+                  borderRadius: Math.max(8, (q.magnitude ?? 0) * 4),
                 },
               ]}
             >
@@ -91,6 +99,12 @@ export default function MapContent() {
           </View>
         ))}
       </View>
+
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="small" color="#4361EE" />
+        </View>
+      )}
 
       <QuakeDetailSheet quake={selected} onClose={() => setSelected(null)} />
     </>
@@ -171,5 +185,11 @@ const styles = StyleSheet.create({
     color: '#8892B0',
     fontSize: 11,
     fontWeight: '600',
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 12,
+    right: 16,
+    zIndex: 10,
   },
 });

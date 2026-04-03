@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function MapContent() {
+export default function MapContent(_props: { quakes?: unknown[]; loading?: boolean }) {
   return (
     <View style={styles.content}>
       <Text style={styles.icon}>🗺️</Text>

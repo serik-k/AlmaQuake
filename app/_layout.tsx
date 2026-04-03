@@ -19,6 +19,7 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const [ready, setReady] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,10 +34,7 @@ export default function RootLayout() {
         }
         setupNotifications();
         if (!onboardingDone) {
-          setReady(true);
-          SplashScreen.hideAsync();
-          router.replace('/onboarding');
-          return;
+          setNeedsOnboarding(true);
         }
       } finally {
         setReady(true);
@@ -45,6 +43,12 @@ export default function RootLayout() {
     }
     prepare();
   }, []);
+
+  useEffect(() => {
+    if (ready && needsOnboarding) {
+      router.replace('/onboarding');
+    }
+  }, [ready, needsOnboarding]);
 
   if (!ready) return null;
 
