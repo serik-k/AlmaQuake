@@ -1,112 +1,184 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import {
+  ScrollView,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useTranslation } from 'react-i18next';
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+type Section = 'before' | 'during' | 'after' | 'bag';
 
-export default function TabTwoScreen() {
+const SECTIONS: { key: Section; icon: string; color: string }[] = [
+  { key: 'before', icon: '📋', color: '#4361EE' },
+  { key: 'during', icon: '🏃', color: '#FF7043' },
+  { key: 'after', icon: '🔍', color: '#00BFA5' },
+  { key: 'bag', icon: '🎒', color: '#AB47BC' },
+];
+
+export default function TipsScreen() {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState<Section>('before');
+
+  const toggle = (key: Section) => setOpen((prev) => (prev === key ? 'before' : key));
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Explore
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
+    <SafeAreaView style={styles.safe}>
+      <View style={styles.header}>
+        <Text style={styles.title}>{t('tips.title')}</Text>
+        <Text style={styles.subtitle}>{t('tips.subtitle')}</Text>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+      >
+        {SECTIONS.map(({ key, icon, color }) => {
+          const isOpen = open === key;
+          const items = t(`tips.${key}`, { returnObjects: true }) as string[];
+          return (
+            <View
+              key={key}
+              style={[styles.section, isOpen && { borderColor: color + '55' }]}
+            >
+              <TouchableOpacity
+                style={styles.sectionHeader}
+                onPress={() => toggle(key)}
+                activeOpacity={0.75}
+              >
+                <View style={[styles.iconBadge, { backgroundColor: color + '22' }]}>
+                  <Text style={styles.sectionIcon}>{icon}</Text>
+                </View>
+                <Text style={styles.sectionTitle}>{t(`tips.sections.${key}`)}</Text>
+                <View style={[styles.chevronBadge, isOpen && { backgroundColor: color + '22' }]}>
+                  <Text style={[styles.chevron, isOpen && { color }]}>
+                    {isOpen ? '▲' : '▼'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              {isOpen && (
+                <View style={styles.itemsContainer}>
+                  {items.map((item, idx) => (
+                    <View key={`${key}-${idx}`} style={styles.item}>
+                      <View style={[styles.numBadge, { backgroundColor: color + '22' }]}>
+                        <Text style={[styles.numText, { color }]}>{idx + 1}</Text>
+                      </View>
+                      <Text style={styles.itemText}>{item}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          );
         })}
-      </Collapsible>
-    </ParallaxScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  safe: {
+    flex: 1,
+    backgroundColor: '#0B0B18',
   },
-  titleContainer: {
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 14,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1C1C35',
+  },
+  title: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    color: '#555770',
+    fontSize: 12,
+    marginTop: 2,
+    fontWeight: '500',
+  },
+  scroll: {
+    padding: 16,
+    gap: 10,
+    paddingBottom: 32,
+  },
+  section: {
+    borderRadius: 14,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#1C1C35',
+    backgroundColor: '#14142A',
+  },
+  sectionHeader: {
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    padding: 14,
+    gap: 12,
+  },
+  iconBadge: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  sectionIcon: {
+    fontSize: 18,
+  },
+  sectionTitle: {
+    flex: 1,
+    color: '#E8E8F0',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  chevronBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#1C1C35',
+  },
+  chevron: {
+    color: '#555770',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  itemsContainer: {
+    borderTopWidth: 1,
+    borderTopColor: '#1C1C35',
+    padding: 14,
+    gap: 10,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  numBadge: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    marginTop: 1,
+  },
+  numText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  itemText: {
+    flex: 1,
+    color: '#8892B0',
+    fontSize: 13,
+    lineHeight: 19,
   },
 });
