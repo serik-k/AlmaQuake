@@ -2,74 +2,47 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface Props {
-  active: boolean;
   onPress: () => void;
 }
 
-const SIZE = 150;
+const SIZE = 180;
 
-export function SOSButton({ active, onPress }: Props) {
-  const scale1 = useRef(new Animated.Value(1)).current;
-  const scale2 = useRef(new Animated.Value(1)).current;
-  const opacity1 = useRef(new Animated.Value(0)).current;
-  const opacity2 = useRef(new Animated.Value(0)).current;
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+export function SOSButton({ onPress }: Props) {
+  const scale = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    if (!active) {
-      if (timer.current) clearTimeout(timer.current);
-      [scale1, scale2].forEach(s => { s.stopAnimation(); s.setValue(1); });
-      [opacity1, opacity2].forEach(o => { o.stopAnimation(); o.setValue(0); });
-      return;
-    }
-
-    const pulse = (s: Animated.Value, o: Animated.Value) =>
-      Animated.loop(
-        Animated.sequence([
-          Animated.parallel([
-            Animated.timing(s, { toValue: 1.6, duration: 1100, useNativeDriver: true }),
-            Animated.timing(o, { toValue: 0, duration: 1100, useNativeDriver: true }),
-          ]),
-          Animated.parallel([
-            Animated.timing(s, { toValue: 1, duration: 0, useNativeDriver: true }),
-            Animated.timing(o, { toValue: 0.35, duration: 0, useNativeDriver: true }),
-          ]),
-        ])
-      );
-
-    opacity1.setValue(0.35);
-    pulse(scale1, opacity1).start();
-    timer.current = setTimeout(() => {
-      opacity2.setValue(0.35);
-      pulse(scale2, opacity2).start();
-    }, 450);
-
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-      [scale1, scale2, opacity1, opacity2].forEach((a) => a.stopAnimation());
-    };
-  }, [active, scale1, scale2, opacity1, opacity2]);
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(scale, {
+          toValue: 1.05,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scale, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [scale]);
 
   return (
     <View style={styles.wrapper}>
       <Animated.View
         style={[
-          styles.ring,
-          { opacity: opacity1, transform: [{ scale: scale1 }] },
-        ]}
-      />
-      <Animated.View
-        style={[
-          styles.ring,
-          { opacity: opacity2, transform: [{ scale: scale2 }] },
+          styles.glow,
+          { transform: [{ scale }] },
         ]}
       />
       <TouchableOpacity
-        style={[styles.button, active && styles.buttonActive]}
         onPress={onPress}
-        activeOpacity={0.85}
+        style={styles.button}
+        activeOpacity={0.8}
       >
-        <Text style={styles.label}>SOS</Text>
+        <Text style={styles.label}>112</Text>
       </TouchableOpacity>
     </View>
   );
@@ -77,42 +50,38 @@ export function SOSButton({ active, onPress }: Props) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: SIZE * 1.8,
-    height: SIZE * 1.8,
+    width: SIZE * 1.5,
+    height: SIZE * 1.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  ring: {
+  glow: {
     position: 'absolute',
     width: SIZE,
     height: SIZE,
     borderRadius: SIZE / 2,
-    backgroundColor: '#FF1744',
+    backgroundColor: '#D32F2F',
+    opacity: 0.15,
   },
   button: {
     width: SIZE,
     height: SIZE,
     borderRadius: SIZE / 2,
-    backgroundColor: '#7B0018',
-    borderWidth: 3,
-    borderColor: '#FF1744',
+    backgroundColor: '#C62828',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#FF1744',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 18,
-    elevation: 14,
-  },
-  buttonActive: {
-    backgroundColor: '#C62828',
-    shadowOpacity: 1,
-    shadowRadius: 28,
+    shadowColor: '#C62828',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 12,
   },
   label: {
     color: '#FFFFFF',
-    fontSize: 50,
+    fontSize: 56,
     fontWeight: '900',
-    letterSpacing: 4,
+    letterSpacing: 2,
   },
 });
+
+

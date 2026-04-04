@@ -36,11 +36,6 @@ export default function MapContent({ quakes, loading }: Props) {
 
   return (
     <>
-      <View style={styles.header}>
-        <Text style={styles.title}>{t('map.title')}</Text>
-        <Text style={styles.subtitle}>{t('map.subtitle', { count: quakes.length })}</Text>
-      </View>
-
       <MapView
         style={styles.map}
         initialRegion={{
@@ -123,25 +118,6 @@ export default function MapContent({ quakes, loading }: Props) {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 14,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1C1C35',
-  },
-  title: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    color: '#555770',
-    fontSize: 12,
-    marginTop: 2,
-    fontWeight: '500',
-  },
   map: {
     flex: 1,
   },

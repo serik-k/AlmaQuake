@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 48,
+    paddingTop: 16,
     paddingBottom: 16,
   },
   title: {
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   scroll: {
     padding: 16,
     gap: 12,
-    paddingBottom: 200,
+    paddingBottom: 220,
   },
   headerWrapper: {
     position: 'absolute',

@@ -12,7 +12,7 @@ const resources = {
       },
       map: {
         title: 'Карта',
-        subtitle: '{{count}} событий • радиус 100 км',
+        subtitle: '{{count}} событий',
       },
       home: {
         title: 'Землетрясения',
@@ -90,18 +90,16 @@ const resources = {
       },
       sos: {
         title: 'SOS',
-        subtitle: 'Экстренная помощь',
-        buttonLabel: 'SOS',
-        buttonHint: 'Удерживайте для вызова 112',
+        subtitle: 'Экстренный вызов',
+        buttonLabel: '112',
+        buttonHint: 'Нажмите для вызова службы спасения',
         calling: 'Вызов 112...',
-        vibrating: 'Сигнал SOS (Морзе)',
-        stopVibration: 'Остановить',
         callEmergency: 'Позвонить 112',
         callConfirmTitle: 'Вызов экстренной службы',
         callConfirmMessage: 'Позвонить на номер 112?',
         callConfirmYes: 'Позвонить',
         callConfirmNo: 'Отмена',
-        info: 'Нажмите кнопку SOS для вибрации в коде Морзе (· · · — — — · · ·) и вызова 112',
+        info: 'В случае возникновения чрезвычайной ситуации нажмите кнопку выше для немедленной связи со службой 112',
         emergency: 'Экстренная служба: 112',
       },
       filter: {
@@ -145,7 +143,7 @@ const resources = {
       },
       map: {
         title: 'Карта',
-        subtitle: '{{count}} оқиға • 100 км радиусы',
+        subtitle: '{{count}} оқиға',
       },
       home: {
         title: 'Жер сілкінісі',
@@ -278,7 +276,7 @@ const resources = {
       },
       map: {
         title: 'Map',
-        subtitle: '{{count}} events • 100 km radius',
+        subtitle: '{{count}} events',
       },
       home: {
         title: 'Earthquakes',

@@ -22,7 +22,12 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "kz.almaquake.app"
+      "package": "kz.almaquake.app",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBWjnXvCXE9uhbRmXEpjnsySpAhSTBRs1I"
+        }
+      }
     },
     "web": {
       "output": "static",

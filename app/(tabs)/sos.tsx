@@ -1,22 +1,20 @@
+import { SOSButton } from '@/src/components/SOSButton';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Linking,
   Platform,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BlurView } from 'expo-blur';
-import { useTranslation } from 'react-i18next';
-import { SOSButton } from '@/src/components/SOSButton';
-import { useSOS } from '@/src/hooks/useSOS';
 
 export default function SOSScreen() {
   const { t } = useTranslation();
-  const { active, toggle, stop } = useSOS();
 
   const callEmergency = () => {
     const url = Platform.OS === 'ios' ? 'telprompt://112' : 'tel:112';
@@ -25,43 +23,31 @@ export default function SOSScreen() {
     });
   };
 
-  const handleSOS = () => {
-    if (!active) {
-      toggle();
-      Alert.alert(
-        t('sos.callConfirmTitle'),
-        t('sos.callConfirmMessage'),
-        [
-          { text: t('sos.callConfirmNo'), style: 'cancel' },
-          { text: t('sos.callConfirmYes'), style: 'destructive', onPress: callEmergency },
-        ]
-      );
-    } else {
-      stop();
-    }
+  const handlePress = () => {
+    Alert.alert(
+      t('sos.callConfirmTitle'),
+      t('sos.callConfirmMessage'),
+      [
+        { text: t('sos.callConfirmNo'), style: 'cancel' },
+        { text: t('sos.callConfirmYes'), style: 'destructive', onPress: callEmergency },
+      ]
+    );
   };
 
   return (
-    <View style={styles.safe}>
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#05050A', '#0A0A1F', '#05050A']}
+        style={StyleSheet.absoluteFill}
+      />
+
       <View style={[styles.body, { paddingTop: 120 }]}>
-        <View style={[styles.statusCard, active && styles.statusCardActive]}>
-          <View style={[styles.statusDot, active && styles.statusDotActive]} />
-          <Text style={[styles.statusText, active && styles.statusTextActive]}>
-            {active ? t('sos.vibrating') : t('sos.info')}
-          </Text>
-        </View>
+        <View style={styles.content}>
+          <SOSButton onPress={handlePress} />
 
-        <SOSButton active={active} onPress={handleSOS} />
-
-        <View style={styles.actions}>
-          {active && (
-            <TouchableOpacity style={styles.stopBtn} onPress={stop} activeOpacity={0.8}>
-              <Text style={styles.stopBtnText}>{t('sos.stopVibration')}</Text>
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity style={styles.callBtn} onPress={callEmergency} activeOpacity={0.8}>
-            <Text style={styles.callBtnText}>📞  {t('sos.callEmergency')}</Text>
-          </TouchableOpacity>
+          <View style={styles.infoWrapper}>
+            <Text style={styles.infoText}>{t('sos.info')}</Text>
+          </View>
         </View>
 
         <Text style={styles.emergencyBg}>112</Text>
@@ -71,7 +57,7 @@ export default function SOSScreen() {
         <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
-            <Text 
+            <Text
               style={styles.title}
               numberOfLines={1}
               adjustsFontSizeToFit
@@ -87,7 +73,7 @@ export default function SOSScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: {
+  container: {
     flex: 1,
     backgroundColor: '#000000',
   },
@@ -122,86 +108,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
-    gap: 32,
-    paddingBottom: 60,
+    paddingBottom: 100,
   },
-  statusCard: {
-    flexDirection: 'row',
+  content: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    maxWidth: 320,
+    gap: 40,
     width: '100%',
-    gap: 12,
   },
-  statusCardActive: {
-    borderColor: '#FF1744',
-    backgroundColor: '#2A0008',
+  infoWrapper: {
+    paddingHorizontal: 32,
   },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#555770',
-    flexShrink: 0,
-  },
-  statusDotActive: {
-    backgroundColor: '#FF1744',
-  },
-  statusText: {
-    flex: 1,
-    color: '#6B7094',
-    fontSize: 12,
-    lineHeight: 17,
-  },
-  statusTextActive: {
-    color: '#FF8A80',
-  },
-  actions: {
-    width: '100%',
-    gap: 12,
-    alignItems: 'center',
-  },
-  stopBtn: {
-    width: '100%',
-    backgroundColor: '#1C1C35',
-    paddingVertical: 15,
-    borderRadius: 14,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#252550',
-  },
-  stopBtnText: {
-    color: '#E0E0F0',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  callBtn: {
-    width: '100%',
-    backgroundColor: '#0A3D1A',
-    paddingVertical: 15,
-    borderRadius: 14,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#1A6B35',
-  },
-  callBtnText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
+  infoText: {
+    color: 'rgba(255, 255, 255, 0.4)',
+    fontSize: 15,
+    lineHeight: 22,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   emergencyBg: {
     position: 'absolute',
-    bottom: -10,
+    bottom: 100,
     color: '#FFFFFF',
-    fontSize: 96,
+    fontSize: 100,
     fontWeight: '900',
-    letterSpacing: 12,
+    letterSpacing: 10,
     opacity: 0.03,
     zIndex: -1,
   },
 });
+
