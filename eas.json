@@ -12,8 +12,7 @@
         "buildType": "apk"
       },
       "ios": {
-        "simulator": false,
-        "enterprise": false
+        "simulator": false
       },
       "distribution": "internal"
     },
