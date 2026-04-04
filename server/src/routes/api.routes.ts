@@ -1,13 +1,18 @@
 import { Router }       from "express";
 import { tokenService } from "../services/token.service";
 import { fetchQuakes }  from "../services/usgs.service";
+import { sendPush }     from "../services/fcm.service";
 
 export const router = Router();
 
+function isValidToken(token: unknown): token is string {
+  return typeof token === "string" && token.length > 10 && token.length < 512;
+}
+
 router.post("/register", (req, res) => {
-  const { token } = req.body as { token?: string };
-  if (!token) {
-    res.status(400).json({ error: "token required" });
+  const { token } = req.body as { token?: unknown };
+  if (!isValidToken(token)) {
+    res.status(400).json({ error: "invalid token" });
     return;
   }
   tokenService.add(token);
@@ -15,10 +20,18 @@ router.post("/register", (req, res) => {
   res.json({ ok: true });
 });
 
+router.delete("/register", (req, res) => {
+  const { token } = req.body as { token?: unknown };
+  if (!isValidToken(token)) {
+    res.status(400).json({ error: "invalid token" });
+    return;
+  }
+  const removed = tokenService.remove(token);
+  console.log(`🗑️ Удалён токен. Всего: ${tokenService.count()}`);
+  res.json({ ok: true, removed });
+});
+
 router.post("/test-push", async (_req, res) => {
-  const { sendPush } = require("../services/fcm.service");
-  const { tokenService } = require("../services/token.service");
-  
   if (tokenService.count() === 0) {
     res.status(400).json({ error: "no tokens registered" });
     return;
@@ -36,14 +49,14 @@ router.post("/test-push", async (_req, res) => {
   };
 
   await sendPush(fakeQuake);
-  res.json({ ok: true, sentTo: tokenService.count() });
+  res.json({ ok: true });
 });
 
 router.get("/quakes", async (_req, res) => {
   try {
     const quakes = await fetchQuakes();
     res.json(quakes);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: "failed to fetch quakes" });
   }
 });
