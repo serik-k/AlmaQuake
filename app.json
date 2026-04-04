@@ -10,11 +10,13 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "kz.almaquake.app",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#0B0B18",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -39,7 +41,16 @@
           "backgroundColor": "#0B0B18"
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/android-icon-monochrome.png",
+          "color": "#4361EE",
+          "defaultChannel": "earthquake_alerts",
+          "androidMode": "default"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
