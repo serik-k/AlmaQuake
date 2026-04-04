@@ -19,7 +19,7 @@ export async function runMonitor(): Promise<void> {
     }
 
     if (latest.id !== lastSeenId) {
-      console.log(`🌍 Новое: M${latest.mag} — ${latest.place}`);
+      console.log(`🌍 Новое: M${latest.magnitude} — ${latest.place}`);
       lastSeenId = latest.id;
       await sendPush(latest);
     }
