@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import MapView, { Circle, Marker, UrlTile } from 'react-native-maps';
 import { useTranslation } from 'react-i18next';
+import * as Location from 'expo-location';
 import { QuakeDetailSheet } from '@/src/components/QuakeDetailSheet';
 import type { Quake } from '@/src/api/quakes.api';
 
@@ -22,6 +23,16 @@ function getMarkerColor(mag: number): string {
 export default function MapContent({ quakes, loading }: Props) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<Quake | null>(null);
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        await Location.requestForegroundPermissionsAsync();
+      } catch (e) {
+        console.warn('[MapContent] Failed to request location permission', e);
+      }
+    })();
+  }, []);
 
   return (
     <>

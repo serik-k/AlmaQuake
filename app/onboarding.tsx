@@ -12,37 +12,41 @@ import {
   View,
 } from 'react-native';
 import { SeismographAnimation } from '@/src/components/SeismographAnimation';
+import { LanguageSelector } from '@/src/components/LanguageSelector';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
-const SLIDES = [
-  {
-    key: 'welcome',
-    icon: '🌏',
-    title: 'Добро пожаловать\nв AlmaQuake',
-    subtitle: 'Мониторинг землетрясений\nв радиусе 100 км от Алматы',
-    color: '#4361EE',
-  },
-  {
-    key: 'monitor',
-    icon: null, // seismograph animation
-    title: 'В реальном времени',
-    subtitle: 'Данные обновляются каждые 60 секунд.\nНажми на карточку — узнай подробности.',
-    color: '#00BFA5',
-  },
-  {
-    key: 'sos',
-    icon: '🆘',
-    title: 'SOS и советы',
-    subtitle: 'Вибросигнал Морзе, вызов 112\nи инструкции на случай ЧС.',
-    color: '#FF1744',
-  },
-];
-
 export default function OnboardingScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [index, setIndex] = useState(0);
   const flatRef = useRef<FlatList>(null);
+  
+  const SLIDES = [
+    {
+      key: 'welcome',
+      icon: '🌏',
+      title: t('onboarding.step1.title'),
+      subtitle: t('onboarding.step1.subtitle'),
+      color: '#4361EE',
+    },
+    {
+      key: 'monitor',
+      icon: null,
+      title: t('onboarding.step2.title'),
+      subtitle: t('onboarding.step2.subtitle'),
+      color: '#00BFA5',
+    },
+    {
+      key: 'sos',
+      icon: '🆘',
+      title: t('onboarding.step3.title'),
+      subtitle: t('onboarding.step3.subtitle'),
+      color: '#FF1744',
+    },
+  ];
+
   const dotAnims = useRef(SLIDES.map((_, i) => new Animated.Value(i === 0 ? 1 : 0))).current;
 
   const goTo = (i: number) => {
@@ -66,6 +70,10 @@ export default function OnboardingScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <View style={styles.header}>
+        <LanguageSelector />
+      </View>
+
       <FlatList
         ref={flatRef}
         data={SLIDES}
@@ -106,7 +114,7 @@ export default function OnboardingScreen() {
         <View style={styles.buttons}>
           {!isLast && (
             <TouchableOpacity style={styles.skipBtn} onPress={finish} activeOpacity={0.7}>
-              <Text style={styles.skipText}>Пропустить</Text>
+              <Text style={styles.skipText}>{t('onboarding.skip')}</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -114,7 +122,9 @@ export default function OnboardingScreen() {
             onPress={() => (isLast ? finish() : goTo(index + 1))}
             activeOpacity={0.85}
           >
-            <Text style={styles.nextText}>{isLast ? 'Начать' : 'Далее'}</Text>
+            <Text style={styles.nextText}>
+              {isLast ? t('onboarding.start') : t('onboarding.next')}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -126,6 +136,12 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: '#0B0B18',
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    alignItems: 'flex-end',
+    height: 50,
   },
   slide: {
     width,

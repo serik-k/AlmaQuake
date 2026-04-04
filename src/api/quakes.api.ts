@@ -2,7 +2,7 @@
 const ALMATY_LAT = 43.2565;
 const ALMATY_LNG = 76.9286;
 const RADIUS_KM = 100;
-const MIN_MAG = 2.5;
+const MIN_MAG = 1.0;
 const LIMIT = 20;
 
 // Base URL — set EXPO_PUBLIC_API_URL in .env to point at your backend.

@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { QuakeCard } from '@/src/components/QuakeCard';
 import { SkeletonCard } from '@/src/components/SkeletonCard';
@@ -20,9 +21,20 @@ import type { Quake } from '@/src/api/quakes.api';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
+  const { selectedId } = useLocalSearchParams<{ selectedId?: string }>();
   const { quakes, loading, error, lastUpdate, refresh } = useQuakes();
   const { filtered, sort, setSort, minMag, setMinMag } = useFilter(quakes);
-  const [selected, setSelected] = useState<Quake | null>(null);
+  const [selected, setSelected] = React.useState<Quake | null>(null);
+
+  // When selectedId changes (from notification), find and open it
+  React.useEffect(() => {
+    if (selectedId && quakes.length > 0) {
+      const found = quakes.find((q) => q.id === selectedId);
+      if (found) {
+        setSelected(found);
+      }
+    }
+  }, [selectedId, quakes]);
 
   const formatTime = (d: Date) =>
     d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

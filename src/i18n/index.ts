@@ -101,6 +101,29 @@ const resources = {
         info: 'Нажмите кнопку SOS для вибрации в коде Морзе (· · · — — — · · ·) и вызова 112',
         emergency: 'Экстренная служба: 112',
       },
+      filter: {
+        all: 'Все',
+        time: 'Время',
+        magnitude: 'Магнитуда',
+        distance: 'Расстояние',
+      },
+      onboarding: {
+        skip: 'Пропустить',
+        next: 'Далее',
+        start: 'Начать',
+        step1: {
+          title: 'Добро пожаловать в AlmaQuake',
+          subtitle: 'Мониторинг землетрясений в радиусе 100 км от Алматы',
+        },
+        step2: {
+          title: 'В реальном времени',
+          subtitle: 'Данные обновляются каждые 60 секунд. Нажми на карточку — узнай подробности.',
+        },
+        step3: {
+          title: 'SOS и советы',
+          subtitle: 'Вибросигнал Морзе, вызов 112 и инструкции на случай ЧС.',
+        },
+      },
       language: {
         ru: 'РУС',
         kk: 'ҚАЗ',
@@ -208,6 +231,29 @@ const resources = {
         info: 'SOS батырмасын басыңыз — Морзе кодымен діріл (· · · — — — · · ·) және 112 қоңыраусы',
         emergency: 'Жедел қызмет: 112',
       },
+      filter: {
+        all: 'Барлығы',
+        time: 'Уақыт',
+        magnitude: 'Магнитуда',
+        distance: 'Қашықтық',
+      },
+      onboarding: {
+        skip: 'Өткізу',
+        next: 'Келесі',
+        start: 'Бастау',
+        step1: {
+          title: 'AlmaQuake-ке қош келдіңіз',
+          subtitle: 'Алматыдан 100 км радиустағы жер сілкіністерін бақылау',
+        },
+        step2: {
+          title: 'Нақты уақыт режимінде',
+          subtitle: 'Деректер 60 секунд сайын жаңартылады. Толығырақ білу үшін карточканы басыңыз.',
+        },
+        step3: {
+          title: 'SOS және кеңестер',
+          subtitle: 'Морзе вибросигналы, 112 шақыру және ТЖ кезіндегі нұсқаулықтар.',
+        },
+      },
       language: {
         ru: 'РУС',
         kk: 'ҚАЗ',
@@ -314,6 +360,29 @@ const resources = {
         callConfirmNo: 'Cancel',
         info: 'Press SOS to vibrate in Morse code (· · · — — — · · ·) and call 112',
         emergency: 'Emergency: 112',
+      },
+      filter: {
+        all: 'All',
+        time: 'Time',
+        magnitude: 'Magnitude',
+        distance: 'Distance',
+      },
+      onboarding: {
+        skip: 'Skip',
+        next: 'Next',
+        start: 'Start',
+        step1: {
+          title: 'Welcome to AlmaQuake',
+          subtitle: 'Earthquake monitoring within 100 km of Almaty',
+        },
+        step2: {
+          title: 'Real-time monitoring',
+          subtitle: 'Data updates every 60 seconds. Tap a card for details.',
+        },
+        step3: {
+          title: 'SOS and Safety Tips',
+          subtitle: 'Morse vibration, 112 calling, and emergency instructions.',
+        },
       },
       language: {
         ru: 'RUS',

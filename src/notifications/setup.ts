@@ -45,8 +45,14 @@ export async function setupNotifications(): Promise<void> {
   }
 
   try {
+    const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+    if (!projectId) {
+      console.warn('[Notifications] EAS Project ID is not defined in app.json. Add it to extra.eas.projectId to enable push tokens.');
+      return;
+    }
+
     const tokenData = await Notifications.getExpoPushTokenAsync({
-      projectId: Constants.expoConfig?.extra?.eas?.projectId,
+      projectId,
     });
     const token = tokenData.data;
     console.log('[Notifications] Token:', token);

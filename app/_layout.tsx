@@ -3,6 +3,7 @@ import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from 'react';
 import 'expo-dev-client';
 
@@ -43,6 +44,18 @@ export default function RootLayout() {
     }
     prepare();
   }, []);
+
+  useEffect(() => {
+    // Handle notification responses (when user taps a notification)
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const quakeId = response.notification.request.content.data?.quakeId;
+      if (quakeId) {
+        router.push({ pathname: '/(tabs)', params: { selectedId: quakeId } });
+      }
+    });
+
+    return () => subscription.remove();
+  }, [router]);
 
   useEffect(() => {
     if (ready && needsOnboarding) {

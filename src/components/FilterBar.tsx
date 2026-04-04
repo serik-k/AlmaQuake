@@ -1,5 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import * as Haptics from 'expo-haptics';
 import type { MinMag, SortKey } from '../hooks/useFilter';
 
 interface Props {
@@ -9,20 +11,22 @@ interface Props {
   onMinMagChange: (m: MinMag) => void;
 }
 
-const SORTS: { key: SortKey; label: string }[] = [
-  { key: 'time',      label: '🕐 Время' },
-  { key: 'magnitude', label: '📊 Магнитуда' },
-  { key: 'distance',  label: '📍 Расстояние' },
-];
-
-const MAG_FILTERS: { value: MinMag; label: string }[] = [
-  { value: 0,   label: 'Все' },
-  { value: 2.5, label: '≥2.5' },
-  { value: 3.5, label: '≥3.5' },
-  { value: 5.0, label: '≥5.0' },
-];
-
 export function FilterBar({ sort, minMag, onSortChange, onMinMagChange }: Props) {
+  const { t } = useTranslation();
+
+  const SORTS: { key: SortKey; label: string; icon: string }[] = [
+    { key: 'time', label: t('filter.time'), icon: '🕐' },
+    { key: 'magnitude', label: t('filter.magnitude'), icon: '📊' },
+    { key: 'distance', label: t('filter.distance'), icon: '📍' },
+  ];
+
+  const MAG_FILTERS: { value: MinMag; label: string }[] = [
+    { value: 1.0, label: t('filter.all') },
+    { value: 2.5, label: '≥2.5' },
+    { value: 3.5, label: '≥3.5' },
+    { value: 5.0, label: '≥5.0' },
+  ];
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -35,11 +39,14 @@ export function FilterBar({ sort, minMag, onSortChange, onMinMagChange }: Props)
             <TouchableOpacity
               key={s.key}
               style={[styles.chip, sort === s.key && styles.chipActive]}
-              onPress={() => onSortChange(s.key)}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                onSortChange(s.key);
+              }}
               activeOpacity={0.7}
             >
               <Text style={[styles.chipText, sort === s.key && styles.chipTextActive]}>
-                {s.label}
+                {s.icon} {s.label}
               </Text>
             </TouchableOpacity>
           ))}
@@ -52,7 +59,10 @@ export function FilterBar({ sort, minMag, onSortChange, onMinMagChange }: Props)
             <TouchableOpacity
               key={String(m.value)}
               style={[styles.chip, minMag === m.value && styles.chipMagActive]}
-              onPress={() => onMinMagChange(m.value)}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                onMinMagChange(m.value);
+              }}
               activeOpacity={0.7}
             >
               <Text style={[styles.chipText, minMag === m.value && styles.chipTextActive]}>
