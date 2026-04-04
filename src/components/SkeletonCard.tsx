@@ -14,7 +14,7 @@ function SkeletonBlock({
 }) {
   const bg = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#1C1C35', '#252550'],
+    outputRange: ['#1A1A35', '#2A2A5A'],
   });
   return (
     <Animated.View

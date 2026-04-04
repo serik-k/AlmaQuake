@@ -36,9 +36,20 @@ function formatDate(ms: number): string {
 }
 
 export function QuakeDetailSheet({ quake, onClose }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const translateY = useRef(new Animated.Value(500)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
+
+  const formatDate = (ms: number) => {
+    const locale = i18n.language === 'kk' ? 'kk-KZ' : i18n.language === 'en' ? 'en-US' : 'ru-RU';
+    return new Date(ms).toLocaleString(locale, {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   useEffect(() => {
     if (quake) {
@@ -117,7 +128,7 @@ export function QuakeDetailSheet({ quake, onClose }: Props) {
             value={`${quake.depthKm.toFixed(1)} ${t('quake.km')}`}
           />
           <Row
-            label={Platform.OS === 'ios' ? 'Координаты' : 'Координаты'}
+            label={t('quake.coordinates')}
             value={`${quake.lat.toFixed(3)}, ${quake.lng.toFixed(3)}`}
           />
           <Row label="ID" value={quake.id} />
@@ -125,10 +136,10 @@ export function QuakeDetailSheet({ quake, onClose }: Props) {
 
         <View style={styles.actions}>
           <TouchableOpacity style={styles.usgsBtn} onPress={openUSGS} activeOpacity={0.8}>
-            <Text style={styles.usgsBtnText}>Открыть на USGS →</Text>
+            <Text style={styles.usgsBtnText}>{t('quake.openUSGS')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.closeBtn} onPress={handleClose} activeOpacity={0.8}>
-            <Text style={styles.closeBtnText}>Закрыть</Text>
+            <Text style={styles.closeBtnText}>{t('quake.close')}</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>

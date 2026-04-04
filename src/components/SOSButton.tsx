@@ -6,7 +6,7 @@ interface Props {
   onPress: () => void;
 }
 
-const SIZE = 170;
+const SIZE = 150;
 
 export function SOSButton({ active, onPress }: Props) {
   const scale1 = useRef(new Animated.Value(1)).current;
@@ -27,7 +27,7 @@ export function SOSButton({ active, onPress }: Props) {
       Animated.loop(
         Animated.sequence([
           Animated.parallel([
-            Animated.timing(s, { toValue: 1.7, duration: 1100, useNativeDriver: true }),
+            Animated.timing(s, { toValue: 1.6, duration: 1100, useNativeDriver: true }),
             Animated.timing(o, { toValue: 0, duration: 1100, useNativeDriver: true }),
           ]),
           Animated.parallel([
@@ -77,8 +77,8 @@ export function SOSButton({ active, onPress }: Props) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: SIZE * 1.9,
-    height: SIZE * 1.9,
+    width: SIZE * 1.8,
+    height: SIZE * 1.8,
     alignItems: 'center',
     justifyContent: 'center',
   },

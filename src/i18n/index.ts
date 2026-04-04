@@ -40,6 +40,9 @@ const resources = {
           strong: 'Сильное',
           major: 'Очень сильное',
         },
+        coordinates: 'Координаты',
+        openUSGS: 'Открыть на USGS →',
+        close: 'Закрыть',
       },
       tips: {
         title: 'Советы',
@@ -170,6 +173,9 @@ const resources = {
           strong: 'Күшті',
           major: 'Өте күшті',
         },
+        coordinates: 'Координаттар',
+        openUSGS: 'USGS арқылы ашу →',
+        close: 'Жабу',
       },
       tips: {
         title: 'Кеңестер',
@@ -300,6 +306,9 @@ const resources = {
           strong: 'Strong',
           major: 'Major',
         },
+        coordinates: 'Coordinates',
+        openUSGS: 'Open on USGS →',
+        close: 'Close',
       },
       tips: {
         title: 'Safety Tips',
