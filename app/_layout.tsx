@@ -48,9 +48,14 @@ export default function RootLayout() {
   useEffect(() => {
     // Handle notification responses (when user taps a notification)
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-      const quakeId = response.notification.request.content.data?.quakeId;
+      const data = response.notification.request.content.data;
+      const quakeId = data?.quakeId;
+      
       if (quakeId) {
-        router.push({ pathname: '/(tabs)', params: { selectedId: quakeId } });
+        router.push({ 
+          pathname: '/(tabs)', 
+          params: { selectedId: String(quakeId) } 
+        });
       }
     });
 
