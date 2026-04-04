@@ -38,23 +38,48 @@ export async function fetchQuakes(): Promise<Quake[]> {
   url.searchParams.set("orderby",        "time");
   url.searchParams.set("limit",          String(limit));
 
-  // @ts-ignore
-  const res  = await fetch(url.toString());
-  if (!res.ok) throw new Error(`USGS responded with ${res.status}`);
-  const data = await res.json() as { features: any[] };
+  const urlStr = url.toString();
+  console.log(`🌐 Запрос к USGS: ${urlStr}`);
 
-  return data.features.map((f) => {
-    const lat = f.geometry.coordinates[1];
-    const lng = f.geometry.coordinates[0];
-    return {
-      id:         f.id,
-      magnitude:  f.properties.mag,
-      place:      f.properties.place,
-      time:       f.properties.time, // USGS уже отдает в ms
-      depthKm:    f.geometry.coordinates[2],
-      lat,
-      lng,
-      distanceKm: Math.round(haversineKm(almatyLat, almatyLng, lat, lng)),
-    };
-  });
+  try {
+    // @ts-ignore
+    const res = await fetch(urlStr, {
+      headers: { 
+        "User-Agent": "AlmaQuake App (kz.almaquake.app)",
+        "Accept": "application/json"
+      },
+      timeout: 15000 // 15 секунд таймаут
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "N/A");
+      console.error(`❌ USGS ошибка: ${res.status} ${res.statusText}. Тело: ${text}`);
+      throw new Error(`USGS responded with ${res.status}`);
+    }
+
+    const data = await res.json() as { features: any[] };
+    console.log(`✅ USGS данные получены. Событий: ${data.features?.length ?? 0}`);
+
+    return (data.features ?? []).map((f: any) => {
+      const lat = f.geometry.coordinates[1];
+      const lng = f.geometry.coordinates[0];
+      return {
+        id:         f.id,
+        magnitude:  f.properties.mag,
+        place:      f.properties.place,
+        time:       f.properties.time,
+        depthKm:    f.geometry.coordinates[2],
+        lat,
+        lng,
+        distanceKm: Math.round(haversineKm(almatyLat, almatyLng, lat, lng)),
+      };
+    });
+  } catch (err: any) {
+    if (err.name === 'FetchError' && err.type === 'request-timeout') {
+      console.error("⏱️ Тайм-аут запроса к USGS (15с)");
+    } else {
+      console.error("❌ Ошибка при запросе к USGS:", err.message);
+    }
+    throw err;
+  }
 }

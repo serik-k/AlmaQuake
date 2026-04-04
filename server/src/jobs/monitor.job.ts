@@ -6,25 +6,27 @@ let lastSeenId: string | null = null;
 
 export async function runMonitor(): Promise<void> {
   try {
-    console.log("🔍 Проверка USGS...");
     const quakes = await fetchQuakes();
-    if (quakes.length === 0) return;
+    if (quakes.length === 0) {
+      console.log("ℹ️ Сейсмическая активность в радиусе 100 км не зафиксирована");
+      return;
+    }
 
     const latest = quakes[0];
 
     if (lastSeenId === null) {
       lastSeenId = latest.id;
-      console.log(`📌 Инициализация: ${latest.id}`);
+      console.log(`📌 Монитор запущен. Последнее событие: ${latest.id} (M${latest.magnitude})`);
       return;
     }
 
     if (latest.id !== lastSeenId) {
-      console.log(`🌍 Новое: M${latest.magnitude} — ${latest.place}`);
+      console.log(`🌍 ОБНАРУЖЕНО НОВОЕ СОБЫТИЕ: M${latest.magnitude} — ${latest.place}`);
       lastSeenId = latest.id;
       await sendPush(latest);
     }
-  } catch (error) {
-    console.error("❌ Ошибка в задаче мониторинга:", error);
+  } catch (error: any) {
+    console.error("⚠️ Сбой мониторинга (повтор через 60с):", error.message || error);
   }
 }
 
