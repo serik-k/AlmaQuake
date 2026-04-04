@@ -1,4 +1,16 @@
-import React, { useState } from 'react';
+import type { Quake } from '@/src/api/quakes.api';
+import { FilterBar } from '@/src/components/FilterBar';
+import { LanguageSelector } from '@/src/components/LanguageSelector';
+import { QuakeCard } from '@/src/components/QuakeCard';
+import { QuakeDetailSheet } from '@/src/components/QuakeDetailSheet';
+import { SeismographAnimation } from '@/src/components/SeismographAnimation';
+import { SkeletonCard } from '@/src/components/SkeletonCard';
+import { useFilter } from '@/src/hooks/useFilter';
+import { useQuakes } from '@/src/hooks/useQuakes';
+import { BlurView } from 'expo-blur';
+import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   FlatList,
   RefreshControl,
@@ -7,18 +19,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { QuakeCard } from '@/src/components/QuakeCard';
-import { SkeletonCard } from '@/src/components/SkeletonCard';
-import { QuakeDetailSheet } from '@/src/components/QuakeDetailSheet';
-import { FilterBar } from '@/src/components/FilterBar';
-import { SeismographAnimation } from '@/src/components/SeismographAnimation';
-import { LanguageSelector } from '@/src/components/LanguageSelector';
-import { useQuakes } from '@/src/hooks/useQuakes';
-import { useFilter } from '@/src/hooks/useFilter';
-import { BlurView } from 'expo-blur';
-import type { Quake } from '@/src/api/quakes.api';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -88,9 +88,9 @@ export default function HomeScreen() {
           <View style={styles.header}>
             <View style={styles.headerTop}>
               <View style={styles.headerLeft}>
-                <Text 
-                  style={styles.title} 
-                  numberOfLines={1} 
+                <Text
+                  style={styles.title}
+                  numberOfLines={1}
                   adjustsFontSizeToFit
                 >
                   {t('home.title')}
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   list: {
-    paddingTop: 160,
+    paddingTop: 170,
     paddingBottom: 140,
   },
   emptyContainer: {
