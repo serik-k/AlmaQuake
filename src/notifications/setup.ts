@@ -22,7 +22,7 @@ export async function setupNotifications(): Promise<void> {
 
   // Android channel
   if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('earthquakes', {
+    await Notifications.setNotificationChannelAsync('earthquake_alerts', {
       name: 'Землетрясения / Earthquakes',
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
@@ -45,17 +45,9 @@ export async function setupNotifications(): Promise<void> {
   }
 
   try {
-    const projectId = Constants.expoConfig?.extra?.eas?.projectId;
-    if (!projectId) {
-      console.warn('[Notifications] EAS Project ID is not defined in app.json. Add it to extra.eas.projectId to enable push tokens.');
-      return;
-    }
-
-    const tokenData = await Notifications.getExpoPushTokenAsync({
-      projectId,
-    });
+    const tokenData = await Notifications.getDevicePushTokenAsync();
     const token = tokenData.data;
-    console.log('[Notifications] Token:', token);
+    console.log('[Notifications] Device Token:', token);
     await registerToken(token);
   } catch (e) {
     console.warn('[Notifications] Failed to get token:', e);
