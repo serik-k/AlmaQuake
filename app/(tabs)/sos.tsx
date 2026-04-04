@@ -12,9 +12,11 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 export default function SOSScreen() {
   const { t } = useTranslation();
+  const tabBarHeight = useBottomTabBarHeight();
 
   const callEmergency = () => {
     const url = Platform.OS === 'ios' ? 'telprompt://112' : 'tel:112';
@@ -41,7 +43,7 @@ export default function SOSScreen() {
         style={StyleSheet.absoluteFill}
       />
 
-      <View style={[styles.body, { paddingTop: 120 }]}>
+      <View style={[styles.body, { paddingTop: 120, paddingBottom: tabBarHeight }]}>
         <View style={styles.content}>
           <SOSButton onPress={handlePress} />
 
@@ -108,7 +110,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
-    paddingBottom: 100,
   },
   content: {
     alignItems: 'center',

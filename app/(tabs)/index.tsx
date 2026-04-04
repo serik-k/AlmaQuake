@@ -19,9 +19,11 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
+  const tabBarHeight = useBottomTabBarHeight();
   const { selectedId } = useLocalSearchParams<{ selectedId?: string }>();
   const { quakes, loading, error, lastUpdate, refresh } = useQuakes();
   const { filtered, sort, setSort, minMag, setMinMag } = useFilter(quakes);
@@ -49,7 +51,9 @@ export default function HomeScreen() {
           <QuakeCard quake={item} onPress={setSelected} />
         )}
         contentContainerStyle={
-          quakes.length === 0 ? styles.emptyContainer : styles.list
+          quakes.length === 0
+            ? styles.emptyContainer
+            : [styles.list, { paddingBottom: tabBarHeight + 16 }]
         }
         refreshControl={
           <RefreshControl
@@ -188,7 +192,6 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingTop: 170,
-    paddingBottom: 140,
   },
   emptyContainer: {
     flexGrow: 1,

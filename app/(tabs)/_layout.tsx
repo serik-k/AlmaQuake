@@ -3,12 +3,15 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 
 export default function TabLayout() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const tabBarHeight = insets.bottom + 54;
 
   return (
     <Tabs
@@ -20,8 +23,8 @@ export default function TabLayout() {
           position: 'absolute',
           borderTopColor: 'rgba(255, 255, 255, 0.1)',
           borderTopWidth: 0.5,
-          height: 84,
-          paddingBottom: 40,
+          height: tabBarHeight,
+          paddingBottom: insets.bottom,
         },
         tabBarBackground: () => (
           <BlurView

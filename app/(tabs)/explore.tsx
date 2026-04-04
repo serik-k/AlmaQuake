@@ -1,3 +1,4 @@
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -22,13 +23,14 @@ const SECTIONS: { key: Section; icon: string; color: string }[] = [
 export default function TipsScreen() {
   const { t } = useTranslation();
   const [open, setOpen] = useState<Section>('before');
+  const tabBarHeight = useBottomTabBarHeight();
 
   const toggle = (key: Section) => setOpen((prev) => (prev === key ? 'before' : key));
 
   return (
     <View style={styles.safe}>
       <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingTop: 140 }]}
+        contentContainerStyle={[styles.scroll, { paddingTop: 140, paddingBottom: tabBarHeight + 16 }]}
         showsVerticalScrollIndicator={false}
       >
         {SECTIONS.map(({ key, icon, color }) => {
@@ -116,7 +118,6 @@ const styles = StyleSheet.create({
   scroll: {
     padding: 16,
     gap: 12,
-    paddingBottom: 220,
   },
   headerWrapper: {
     position: 'absolute',
