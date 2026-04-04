@@ -16,6 +16,6 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#0B0B18',
+    backgroundColor: '#050510',
   },
 });

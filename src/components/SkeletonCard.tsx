@@ -29,8 +29,8 @@ export function SkeletonCard() {
   useEffect(() => {
     const animation = Animated.loop(
       Animated.sequence([
-        Animated.timing(anim, { toValue: 1, duration: 900, useNativeDriver: false }),
-        Animated.timing(anim, { toValue: 0, duration: 900, useNativeDriver: false }),
+        Animated.timing(anim, { toValue: 1, duration: 1000, useNativeDriver: false }),
+        Animated.timing(anim, { toValue: 0, duration: 1000, useNativeDriver: false }),
       ])
     );
     animation.start();
@@ -39,20 +39,18 @@ export function SkeletonCard() {
 
   return (
     <View style={styles.card}>
-      <View style={styles.stripe} />
-      <View style={styles.badge}>
-        <SkeletonBlock width={40} height={30} borderRadius={6} anim={anim} />
-        <SkeletonBlock width={32} height={8} borderRadius={4} anim={anim} />
-      </View>
-      <View style={styles.info}>
-        <SkeletonBlock width="90%" height={13} anim={anim} />
-        <View style={{ height: 4 }} />
-        <SkeletonBlock width="60%" height={13} anim={anim} />
-        <View style={{ height: 8 }} />
-        <View style={styles.tags}>
-          <SkeletonBlock width={70} height={22} borderRadius={6} anim={anim} />
-          <SkeletonBlock width={70} height={22} borderRadius={6} anim={anim} />
-          <SkeletonBlock width={60} height={22} borderRadius={6} anim={anim} />
+      <View style={styles.inner}>
+        <View style={styles.magPlaceholder}>
+          <SkeletonBlock width={1} height={1} anim={anim} />
+        </View>
+        <View style={styles.info}>
+          <SkeletonBlock width="80%" height={16} borderRadius={8} anim={anim} />
+          <View style={{ height: 12 }} />
+          <View style={styles.tags}>
+            <SkeletonBlock width={60} height={20} borderRadius={6} anim={anim} />
+            <SkeletonBlock width={80} height={20} borderRadius={6} anim={anim} />
+            <SkeletonBlock width={50} height={20} borderRadius={6} anim={anim} />
+          </View>
         </View>
       </View>
     </View>
@@ -61,35 +59,34 @@ export function SkeletonCard() {
 
 const styles = StyleSheet.create({
   card: {
+    backgroundColor: '#111118',
+    borderRadius: 22,
+    marginHorizontal: 20,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  inner: {
     flexDirection: 'row',
-    backgroundColor: '#14142A',
-    borderRadius: 14,
-    marginHorizontal: 16,
-    marginVertical: 5,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#1C1C35',
-  },
-  stripe: {
-    width: 4,
-    backgroundColor: '#1C1C35',
-  },
-  badge: {
-    width: 74,
+    padding: 18,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    gap: 6,
+  },
+  magPlaceholder: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    marginRight: 16,
+    overflow: 'hidden',
   },
   info: {
     flex: 1,
-    paddingVertical: 14,
-    paddingRight: 12,
-    paddingLeft: 10,
-    justifyContent: 'center',
   },
   tags: {
     flexDirection: 'row',
-    gap: 5,
+    gap: 8,
   },
 });

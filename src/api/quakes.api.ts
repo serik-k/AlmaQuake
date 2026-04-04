@@ -1,3 +1,5 @@
+import Constants from 'expo-constants';
+
 // Almaty coordinates
 const ALMATY_LAT = 43.2565;
 const ALMATY_LNG = 76.9286;
@@ -7,7 +9,7 @@ const LIMIT = 20;
 
 // Base URL — set EXPO_PUBLIC_API_URL in .env to point at your backend.
 // Falls back to querying USGS directly.
-const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? '';
+const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? Constants.expoConfig?.extra?.apiUrl ?? '';
 
 export interface Quake {
   id: string;

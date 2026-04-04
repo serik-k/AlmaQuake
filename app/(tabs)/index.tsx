@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import {
   FlatList,
   RefreshControl,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { QuakeCard } from '@/src/components/QuakeCard';
@@ -17,6 +17,7 @@ import { SeismographAnimation } from '@/src/components/SeismographAnimation';
 import { LanguageSelector } from '@/src/components/LanguageSelector';
 import { useQuakes } from '@/src/hooks/useQuakes';
 import { useFilter } from '@/src/hooks/useFilter';
+import { BlurView } from 'expo-blur';
 import type { Quake } from '@/src/api/quakes.api';
 
 export default function HomeScreen() {
@@ -39,172 +40,196 @@ export default function HomeScreen() {
   const formatTime = (d: Date) =>
     d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  const ListHeader = () =>
-    lastUpdate ? (
-      <View style={styles.updateRow}>
-        <View style={styles.liveDot} />
-        <Text style={styles.updateText}>
-          {t('home.lastUpdate')} {formatTime(lastUpdate)}
-        </Text>
-      </View>
-    ) : null;
-
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <Text style={styles.title}>{t('home.title')}</Text>
-          <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
-        </View>
-        <LanguageSelector />
-      </View>
-
-      <FilterBar
-        sort={sort}
-        minMag={minMag}
-        onSortChange={setSort}
-        onMinMagChange={setMinMag}
-      />
-
-      {loading && quakes.length === 0 ? (
-        <>
-          {[...Array(5)].map((_, i) => <SkeletonCard key={i} />)}
-        </>
-      ) : error && quakes.length === 0 ? (
-        <View style={styles.center}>
-          <View style={styles.errorIconWrap}>
-            <Text style={styles.errorIconText}>⚠️</Text>
-          </View>
-          <Text style={styles.errorText}>{t('home.error')}</Text>
-        </View>
-      ) : (
-        <FlatList<Quake>
-          data={filtered}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <QuakeCard quake={item} onPress={setSelected} />
-          )}
-          ListHeaderComponent={ListHeader}
-          contentContainerStyle={
-            quakes.length === 0 ? styles.emptyContainer : styles.list
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={loading}
-              onRefresh={refresh}
-              tintColor="#4361EE"
-              colors={['#4361EE']}
-            />
-          }
-          ListEmptyComponent={
+    <View style={styles.safe}>
+      <FlatList<Quake>
+        data={filtered}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <QuakeCard quake={item} onPress={setSelected} />
+        )}
+        contentContainerStyle={
+          quakes.length === 0 ? styles.emptyContainer : styles.list
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={refresh}
+            tintColor="#4361EE"
+            colors={['#4361EE']}
+            progressViewOffset={160}
+          />
+        }
+        ListEmptyComponent={
+          loading && quakes.length === 0 ? (
+            <>
+              {[...Array(5)].map((_, i) => <SkeletonCard key={i} />)}
+            </>
+          ) : error && quakes.length === 0 ? (
+            <View style={styles.center}>
+              <View style={styles.errorIconWrap}>
+                <Text style={styles.errorIconText}>⚠️</Text>
+              </View>
+              <Text style={styles.errorText}>{t('home.error')}</Text>
+            </View>
+          ) : (
             <View style={styles.center}>
               <SeismographAnimation color="#4361EE" />
               <Text style={styles.emptyText}>{t('home.empty')}</Text>
               <Text style={styles.hint}>{t('home.emptyHint')}</Text>
             </View>
-          }
-        />
-      )}
+          )
+        }
+      />
+
+      <View style={styles.headerWrapper}>
+        <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+            <View style={styles.headerTop}>
+              <View style={styles.headerLeft}>
+                <Text 
+                  style={styles.title} 
+                  numberOfLines={1} 
+                  adjustsFontSizeToFit
+                >
+                  {t('home.title')}
+                </Text>
+                <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
+              </View>
+              <LanguageSelector />
+            </View>
+            {lastUpdate && (
+              <View style={styles.updateRow}>
+                <View style={styles.liveDot} />
+                <Text style={styles.updateText}>
+                  {t('home.lastUpdate')} {formatTime(lastUpdate)}
+                </Text>
+              </View>
+            )}
+            <FilterBar
+              sort={sort}
+              minMag={minMag}
+              onSortChange={setSort}
+              onMinMagChange={setMinMag}
+            />
+          </View>
+        </SafeAreaView>
+      </View>
 
       <QuakeDetailSheet quake={selected} onClose={() => setSelected(null)} />
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#0B0B18',
+    backgroundColor: '#000000',
+  },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
   header: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 16,
+  },
+  headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1C1C35',
+    marginBottom: 4,
   },
   headerLeft: {
     flex: 1,
-    marginRight: 12,
+    marginRight: 16,
   },
   title: {
     color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '800',
-    letterSpacing: -0.5,
+    fontSize: 20,
+    fontWeight: '900',
+    letterSpacing: -0.2,
   },
   subtitle: {
-    color: '#555770',
-    fontSize: 12,
-    marginTop: 2,
-    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.4)',
+    fontSize: 14,
+    marginTop: 4,
+    fontWeight: '600',
   },
   updateRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 4,
+    gap: 8,
+    marginTop: 8,
   },
   liveDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
     backgroundColor: '#00E676',
+    shadowColor: '#00E676',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
   },
   updateText: {
-    color: '#555770',
+    color: 'rgba(255, 255, 255, 0.3)',
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   list: {
-    paddingBottom: 24,
+    paddingTop: 160,
+    paddingBottom: 120,
   },
   emptyContainer: {
     flexGrow: 1,
+    paddingTop: 160,
   },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
-    gap: 10,
+    padding: 40,
   },
-  bigIcon: {
-    fontSize: 52,
-    marginBottom: 4,
+  emptyText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '800',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  hint: {
+    color: 'rgba(255, 255, 255, 0.4)',
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 8,
+    lineHeight: 20,
   },
   errorIconWrap: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: '#2A0A00',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 82, 82, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4,
+    marginBottom: 16,
   },
   errorIconText: {
     fontSize: 32,
   },
-  emptyText: {
-    color: '#E0E0F0',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
   errorText: {
     color: '#FF5252',
-    fontSize: 14,
+    fontSize: 15,
     textAlign: 'center',
-    fontWeight: '500',
-  },
-  hint: {
-    color: '#555770',
-    fontSize: 12,
-    textAlign: 'center',
+    fontWeight: '700',
   },
 });

@@ -52,7 +52,6 @@ export function FilterBar({ sort, minMag, onSortChange, onMinMagChange }: Props)
           ))}
         </View>
 
-        <View style={styles.divider} />
 
         <View style={styles.group}>
           {MAG_FILTERS.map((m) => (
@@ -78,47 +77,54 @@ export function FilterBar({ sort, minMag, onSortChange, onMinMagChange }: Props)
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#1C1C35',
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
   row: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 6,
+    paddingHorizontal: 20,
+    gap: 8,
     alignItems: 'center',
   },
   group: {
     flexDirection: 'row',
-    gap: 6,
-  },
-  divider: {
-    width: 1,
-    height: 20,
-    backgroundColor: '#252550',
-    marginHorizontal: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: 12,
+    padding: 3,
+    gap: 2,
   },
   chip: {
-    paddingHorizontal: 11,
+    paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: '#14142A',
-    borderWidth: 1,
-    borderColor: '#252550',
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 80,
   },
   chipActive: {
-    backgroundColor: '#1C2060',
-    borderColor: '#4361EE',
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   chipMagActive: {
-    backgroundColor: '#3A1500',
-    borderColor: '#FF7043',
+    backgroundColor: '#FF7043',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   chipText: {
-    color: '#555770',
-    fontSize: 12,
-    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.5)',
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.3,
   },
   chipTextActive: {
-    color: '#FFFFFF',
+    color: '#000000',
   },
 });

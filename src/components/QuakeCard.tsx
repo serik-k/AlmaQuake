@@ -37,32 +37,33 @@ export function QuakeCard({ quake, onPress }: Props) {
     onPress?.(quake);
   };
 
+  const [magWhole, magDecimal] = quake.magnitude.toFixed(1).split('.');
+
   return (
-    <TouchableOpacity style={styles.card} onPress={handlePress} activeOpacity={0.75}>
-      <View style={[styles.stripe, { backgroundColor: sev.color }]} />
+    <TouchableOpacity style={styles.card} onPress={handlePress} activeOpacity={0.7}>
+      <View style={styles.inner}>
+        <View style={[styles.magContainer, { backgroundColor: sev.bg }]}>
+          <Text style={[styles.mag, { color: sev.color }]}>
+            {magWhole}<Text style={styles.magDecimal}>.{magDecimal}</Text>
+          </Text>
+        </View>
 
-      <View style={[styles.badge, { backgroundColor: sev.bg }]}>
-        <Text style={[styles.mag, { color: sev.color }]}>
-          {quake.magnitude.toFixed(1)}
-        </Text>
-        <Text style={[styles.sevLabel, { color: sev.color }]}>
-          {t(`quake.severity.${sev.key}`)}
-        </Text>
-      </View>
-
-      <View style={styles.info}>
-        <Text style={styles.place} numberOfLines={2}>{quake.place}</Text>
-        <View style={styles.tags}>
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>📍 {quake.distanceKm} {t('quake.km')}</Text>
-          </View>
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>🕐 {timeAgo}</Text>
-          </View>
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>↓ {quake.depthKm.toFixed(0)} {t('quake.km')}</Text>
+        <View style={styles.info}>
+          <Text style={styles.place} numberOfLines={2}>{quake.place}</Text>
+          <View style={styles.tags}>
+            <View style={styles.tag}>
+              <Text style={styles.tagText}>📍 {quake.distanceKm} {t('quake.km')}</Text>
+            </View>
+            <View style={styles.tag}>
+              <Text style={styles.tagText}>🕐 {timeAgo}</Text>
+            </View>
+            <View style={styles.tag}>
+              <Text style={styles.tagText}>↓ {quake.depthKm.toFixed(0)} {t('quake.km')}</Text>
+            </View>
           </View>
         </View>
+
+        <Text style={styles.chevron}>›</Text>
       </View>
     </TouchableOpacity>
   );
@@ -70,74 +71,79 @@ export function QuakeCard({ quake, onPress }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'row',
-    backgroundColor: '#14142A',
-    borderRadius: 14,
-    marginHorizontal: 16,
-    marginVertical: 5,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#252550',
-    elevation: 3,
+    backgroundColor: '#111118',
+    borderRadius: 22,
+    marginHorizontal: 20,
+    marginVertical: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  stripe: {
-    width: 4,
-    alignSelf: 'stretch',
+  inner: {
+    flexDirection: 'row',
+    padding: 18,
+    alignItems: 'center',
   },
-  badge: {
-    width: 74,
+  magContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 8,
+    marginRight: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   mag: {
-    fontSize: 26,
-    fontWeight: '800',
-    lineHeight: 30,
+    fontSize: 22,
+    fontWeight: '900',
+    letterSpacing: -0.5,
   },
-  sevLabel: {
-    fontSize: 8,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginTop: 3,
-    textAlign: 'center',
+  magDecimal: {
+    fontSize: 18,
   },
   info: {
     flex: 1,
-    paddingVertical: 12,
-    paddingRight: 12,
-    paddingLeft: 10,
     justifyContent: 'center',
   },
   place: {
-    color: '#E8E8F0',
-    fontSize: 13,
-    fontWeight: '600',
-    marginBottom: 8,
-    lineHeight: 18,
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '700',
+    marginBottom: 6,
+    lineHeight: 22,
+    letterSpacing: -0.3,
   },
   tags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 5,
+    gap: 8,
   },
   tag: {
-    backgroundColor: '#1C1C38',
-    borderRadius: 6,
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderWidth: 1,
-    borderColor: '#252550',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.07)',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    gap: 4,
   },
   tagText: {
-    color: '#6B7094',
+    color: 'rgba(255, 255, 255, 0.5)',
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+    lineHeight: 14,
+  },
+  chevron: {
+    color: 'rgba(255, 255, 255, 0.2)',
+    fontSize: 18,
+    marginLeft: 10,
+    fontWeight: '300',
   },
 });

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ScrollView,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { BlurView } from 'expo-blur';
 
 type Section = 'before' | 'during' | 'after' | 'bag';
 
@@ -25,14 +26,9 @@ export default function TipsScreen() {
   const toggle = (key: Section) => setOpen((prev) => (prev === key ? 'before' : key));
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{t('tips.title')}</Text>
-        <Text style={styles.subtitle}>{t('tips.subtitle')}</Text>
-      </View>
-
+    <View style={styles.safe}>
       <ScrollView
-        contentContainerStyle={styles.scroll}
+        contentContainerStyle={[styles.scroll, { paddingTop: 140 }]}
         showsVerticalScrollIndicator={false}
       >
         {SECTIONS.map(({ key, icon, color }) => {
@@ -75,45 +71,68 @@ export default function TipsScreen() {
           );
         })}
       </ScrollView>
-    </SafeAreaView>
+
+      <View style={styles.headerWrapper}>
+        <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+            <Text 
+              style={styles.title}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
+              {t('tips.title')}
+            </Text>
+            <Text style={styles.subtitle}>{t('tips.subtitle')}</Text>
+          </View>
+        </SafeAreaView>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#0B0B18',
+    backgroundColor: '#000000',
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 14,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1C1C35',
+    paddingTop: 48,
+    paddingBottom: 16,
   },
   title: {
     color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '800',
-    letterSpacing: -0.5,
+    fontSize: 20,
+    fontWeight: '900',
+    letterSpacing: -0.2,
   },
   subtitle: {
-    color: '#555770',
-    fontSize: 12,
-    marginTop: 2,
-    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.4)',
+    fontSize: 14,
+    marginTop: 4,
+    fontWeight: '600',
   },
   scroll: {
     padding: 16,
-    gap: 10,
-    paddingBottom: 32,
+    gap: 12,
+    paddingBottom: 200,
+  },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
   section: {
-    borderRadius: 14,
+    borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#1C1C35',
-    backgroundColor: '#14142A',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
   },
   sectionHeader: {
     flexDirection: 'row',

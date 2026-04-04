@@ -3,12 +3,13 @@ import {
   Alert,
   Linking,
   Platform,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import { SOSButton } from '@/src/components/SOSButton';
 import { useSOS } from '@/src/hooks/useSOS';
@@ -41,13 +42,8 @@ export default function SOSScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{t('sos.title')}</Text>
-        <Text style={styles.subtitle}>{t('sos.subtitle')}</Text>
-      </View>
-
-      <View style={styles.body}>
+    <View style={styles.safe}>
+      <View style={[styles.body, { paddingTop: 120 }]}>
         <View style={[styles.statusCard, active && styles.statusCardActive]}>
           <View style={[styles.statusDot, active && styles.statusDotActive]} />
           <Text style={[styles.statusText, active && styles.statusTextActive]}>
@@ -70,53 +66,77 @@ export default function SOSScreen() {
 
         <Text style={styles.emergencyBg}>112</Text>
       </View>
-    </SafeAreaView>
+
+      <View style={styles.headerWrapper}>
+        <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+            <Text 
+              style={styles.title}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
+              {t('sos.title')}
+            </Text>
+            <Text style={styles.subtitle}>{t('sos.subtitle')}</Text>
+          </View>
+        </SafeAreaView>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#0B0B18',
+    backgroundColor: '#000000',
+  },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 14,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1C1C35',
+    paddingTop: 16,
+    paddingBottom: 16,
   },
   title: {
     color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '800',
-    letterSpacing: -0.5,
+    fontSize: 20,
+    fontWeight: '900',
+    letterSpacing: -0.2,
   },
   subtitle: {
-    color: '#555770',
-    fontSize: 12,
-    marginTop: 2,
-    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.4)',
+    fontSize: 14,
+    marginTop: 4,
+    fontWeight: '600',
   },
   body: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
-    gap: 28,
+    gap: 32,
+    paddingBottom: 60,
   },
   statusCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#14142A',
-    borderRadius: 14,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     borderWidth: 1,
-    borderColor: '#252550',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
     maxWidth: 320,
     width: '100%',
-    gap: 10,
+    gap: 12,
   },
   statusCardActive: {
     borderColor: '#FF1744',
