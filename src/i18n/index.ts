@@ -7,12 +7,7 @@ const resources = {
       tabs: {
         home: 'Главная',
         tips: 'Советы',
-        map: 'Карта',
         sos: 'SOS',
-      },
-      map: {
-        title: 'Карта',
-        subtitle: '{{count}} событий',
       },
       home: {
         title: 'Землетрясения',
@@ -138,12 +133,7 @@ const resources = {
       tabs: {
         home: 'Басты',
         tips: 'Кеңестер',
-        map: 'Карта',
         sos: 'SOS',
-      },
-      map: {
-        title: 'Карта',
-        subtitle: '{{count}} оқиға',
       },
       home: {
         title: 'Жер сілкінісі',
@@ -271,12 +261,7 @@ const resources = {
       tabs: {
         home: 'Home',
         tips: 'Tips',
-        map: 'Map',
         sos: 'SOS',
-      },
-      map: {
-        title: 'Map',
-        subtitle: '{{count}} events',
       },
       home: {
         title: 'Earthquakes',

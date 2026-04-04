@@ -1,8 +1,8 @@
+import { BlurView } from 'expo-blur';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { BlurView } from 'expo-blur';
-import { StyleSheet, Platform } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -21,7 +21,7 @@ export default function TabLayout() {
           borderTopColor: 'rgba(255, 255, 255, 0.1)',
           borderTopWidth: 0.5,
           height: 84,
-          paddingBottom: 28,
+          paddingBottom: 40,
         },
         tabBarBackground: () => (
           <BlurView
@@ -56,15 +56,6 @@ export default function TabLayout() {
           title: t('tabs.tips'),
           tabBarIcon: ({ color }) => (
             <IconSymbol size={24} name="book.fill" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: t('tabs.map'),
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={24} name="map.fill" color={color} />
           ),
         }}
       />
