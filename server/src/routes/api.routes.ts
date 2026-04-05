@@ -1,12 +1,27 @@
-import { Router }       from "express";
-import { tokenService } from "../services/token.service";
-import { fetchQuakes }  from "../services/usgs.service";
-import { sendPush }     from "../services/fcm.service";
+import { Router }          from "express";
+import { tokenService }    from "../services/token.service";
+import { fetchQuakes }     from "../services/usgs.service";
+import { sendPush }        from "../services/fcm.service";
+import { sendQuakeAlert }  from "../services/telegram.service";
 
 export const router = Router();
 
 function isValidToken(token: unknown): token is string {
   return typeof token === "string" && token.length > 10 && token.length < 512;
+}
+
+function requireAdminKey(req: any, res: any): boolean {
+  const adminKey = process.env.ADMIN_SECRET;
+  if (!adminKey) {
+    res.status(503).json({ error: "admin endpoint disabled" });
+    return false;
+  }
+  const provided = req.headers["x-admin-secret"] ?? req.body?.adminSecret;
+  if (provided !== adminKey) {
+    res.status(403).json({ error: "forbidden" });
+    return false;
+  }
+  return true;
 }
 
 router.post("/register", (req, res) => {
@@ -31,12 +46,8 @@ router.delete("/register", (req, res) => {
   res.json({ ok: true, removed });
 });
 
-router.post("/test-push", async (_req, res) => {
-  if (tokenService.count() === 0) {
-    res.status(400).json({ error: "no tokens registered" });
-    return;
-  }
-
+router.post("/test-push", async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
   const fakeQuake = {
     id: "test-" + Date.now(),
     magnitude: 6.5,
@@ -48,7 +59,24 @@ router.post("/test-push", async (_req, res) => {
     distanceKm: 0,
   };
 
-  await sendPush(fakeQuake);
+  await Promise.all([sendPush(fakeQuake), sendQuakeAlert(fakeQuake)]);
+  res.json({ ok: true, fcmTokens: tokenService.count() });
+});
+
+router.post("/test-telegram", async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  const fakeQuake = {
+    id: "test-" + Date.now(),
+    magnitude: 5.8,
+    place: "ТЕСТОВОЕ УВЕДОМЛЕНИЕ · Алматы",
+    time: Date.now(),
+    depthKm: 12,
+    lat: 43.2565,
+    lng: 76.9286,
+    distanceKm: 5,
+  };
+
+  await sendQuakeAlert(fakeQuake);
   res.json({ ok: true });
 });
 
