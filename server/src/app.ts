@@ -3,6 +3,7 @@ import cors             from "cors";
 import rateLimit        from "express-rate-limit";
 import { router }       from "./routes/api.routes";
 import { startMonitorJob } from "./jobs/monitor.job";
+import { startTelegramBot } from "./services/telegram.service";
 import { config }       from "./config";
 
 const app = express();
@@ -47,4 +48,5 @@ app.use("/api", router);
 app.listen(config.port, () => {
   console.log(`🟢 Сервер на порту ${config.port}`);
   startMonitorJob();
+  startTelegramBot();
 });

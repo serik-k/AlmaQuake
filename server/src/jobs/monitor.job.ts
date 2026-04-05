@@ -1,6 +1,7 @@
-import { fetchQuakes } from "../services/usgs.service";
-import { sendPush }    from "../services/fcm.service";
-import { config }      from "../config";
+import { fetchQuakes }      from "../services/usgs.service";
+import { sendPush }         from "../services/fcm.service";
+import { sendQuakeAlert }   from "../services/telegram.service";
+import { config }           from "../config";
 
 let lastSeenId: string | null = null;
 
@@ -23,7 +24,7 @@ export async function runMonitor(): Promise<void> {
     if (latest.id !== lastSeenId) {
       console.log(`🌍 ОБНАРУЖЕНО НОВОЕ СОБЫТИЕ: M${latest.magnitude} — ${latest.place}`);
       lastSeenId = latest.id;
-      await sendPush(latest);
+      await Promise.all([sendPush(latest), sendQuakeAlert(latest)]);
     }
   } catch (error: any) {
     console.error("⚠️ Сбой мониторинга (повтор через 60с):", error.message || error);
