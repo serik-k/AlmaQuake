@@ -9,6 +9,78 @@ const API = `https://api.telegram.org/bot${TOKEN}`;
 let offset = 0;
 let polling = false;
 
+// ─── Тексты инструкций ───────────────────────────────────────────────────────
+
+const SAFETY = {
+  before: `🏠 <b>До землетрясения</b>
+
+• Закрепи тяжёлую мебель и шкафы к стенам
+• Держи аптечку, воду (3 л/чел/день) и еду на 3 суток
+• Запомни безопасные места в каждой комнате: углы несущих стен, проёмы
+• Узнай, где отключается газ, вода и электричество
+• Договорись с семьёй о точке сбора вне дома
+• Держи документы и деньги в одном месте`,
+
+  during: `🚨 <b>Во время землетрясения</b>
+
+<b>Если ты внутри:</b>
+• Не беги к лифту и лестницам — падающие предметы опасны
+• Встань в угол несущей стены или под дверной проём
+• Укройся под столом, прикрой голову руками
+• Держись подальше от окон и тяжёлой мебели
+
+<b>Если ты на улице:</b>
+• Отойди от зданий, деревьев, столбов и проводов
+• Ляг на землю лицом вниз, прикрой голову руками
+
+<b>Если ты в машине:</b>
+• Остановись вдали от мостов и зданий
+• Оставайся в машине до окончания толчков`,
+
+  after: `✅ <b>После землетрясения</b>
+
+• Проверь себя и близких на травмы — не двигай тяжелораненых
+• Выйди из здания, если есть трещины или запах газа
+• Не пользуйся лифтами — они могут отключиться
+• Не зажигай огонь — возможна утечка газа
+• Слушай официальные сообщения по радио или телефону
+• Будь готов к повторным толчкам (афтершокам)
+• Не возвращайся в повреждённое здание без разрешения`,
+
+  bag: `🎒 <b>Тревожный чемодан</b>
+
+<b>Документы:</b>
+• Паспорта, свидетельства о рождении (копии)
+• Медицинские полисы, страховки
+
+<b>Вода и еда:</b>
+• Вода — 3 литра на человека на 3 дня
+• Консервы, орехи, сухофрукты, энергобатончики
+
+<b>Аптечка:</b>
+• Бинты, антисептик, обезболивающее
+• Личные лекарства на 5–7 дней
+
+<b>Прочее:</b>
+• Фонарик + запасные батарейки
+• Портативная зарядка для телефона
+• Наличные деньги
+• Тёплая одежда и дождевик
+• Свисток для подачи сигнала`,
+};
+
+const HELP_TEXT = `🌍 <b>AlmaQuake — команды бота</b>
+
+/start — подписаться на уведомления
+/stop — отписаться от уведомлений
+/safety — инструкции по безопасности
+/before — что делать до землетрясения
+/during — что делать во время
+/after — что делать после
+/bag — тревожный чемодан`;
+
+// ─── Telegram API helpers ─────────────────────────────────────────────────────
+
 async function tgCall(method: string, body: object): Promise<any> {
   try {
     const res = await fetch(`${API}/${method}`, {
@@ -28,6 +100,52 @@ async function sendMessage(chatId: number, text: string): Promise<void> {
     text,
     parse_mode: "HTML",
   });
+}
+
+// ─── Polling ──────────────────────────────────────────────────────────────────
+
+async function handleCommand(chatId: number, text: string, name: string): Promise<void> {
+  const cmd = text.split("@")[0]; // убираем @botname если есть
+
+  switch (cmd) {
+    case "/start":
+      chatService.add(chatId);
+      await sendMessage(
+        chatId,
+        `🌍 <b>AlmaQuake</b>\n\nПривет, ${name}! Ты подписан на уведомления о землетрясениях в радиусе 100 км от Алматы (M≥2.5).\n\n${HELP_TEXT}`
+      );
+      console.log(`✅ Telegram подписчик добавлен: ${chatId} (${name})`);
+      break;
+
+    case "/stop":
+      chatService.remove(chatId);
+      await sendMessage(chatId, `👋 Ты отписан от уведомлений. Отправь /start чтобы подписаться снова.`);
+      console.log(`🗑️ Telegram подписчик удалён: ${chatId}`);
+      break;
+
+    case "/safety":
+      await sendMessage(chatId, HELP_TEXT);
+      break;
+
+    case "/before":
+      await sendMessage(chatId, SAFETY.before);
+      break;
+
+    case "/during":
+      await sendMessage(chatId, SAFETY.during);
+      break;
+
+    case "/after":
+      await sendMessage(chatId, SAFETY.after);
+      break;
+
+    case "/bag":
+      await sendMessage(chatId, SAFETY.bag);
+      break;
+
+    default:
+      await sendMessage(chatId, `Неизвестная команда. Отправь /safety чтобы увидеть список команд.`);
+  }
 }
 
 async function pollUpdates(): Promise<void> {
@@ -52,20 +170,8 @@ async function pollUpdates(): Promise<void> {
       const text: string = msg.text.trim();
       const name: string = msg.chat.first_name ?? "друг";
 
-      if (text === "/start") {
-        chatService.add(chatId);
-        await sendMessage(
-          chatId,
-          `🌍 <b>AlmaQuake</b>\n\nПривет, ${name}! Ты подписан на уведомления о землетрясениях в радиусе 100 км от Алматы (M≥2.5).\n\nОтправь /stop чтобы отписаться.`
-        );
-        console.log(`✅ Telegram подписчик добавлен: ${chatId} (${name})`);
-      } else if (text === "/stop") {
-        chatService.remove(chatId);
-        await sendMessage(
-          chatId,
-          `👋 Ты отписан от уведомлений. Отправь /start чтобы подписаться снова.`
-        );
-        console.log(`🗑️ Telegram подписчик удалён: ${chatId}`);
+      if (text.startsWith("/")) {
+        await handleCommand(chatId, text, name);
       }
     }
   } catch (e) {
@@ -74,6 +180,8 @@ async function pollUpdates(): Promise<void> {
     if (polling) setTimeout(pollUpdates, 1000);
   }
 }
+
+// ─── Public API ───────────────────────────────────────────────────────────────
 
 export function startTelegramBot(): void {
   if (!TOKEN) {
@@ -103,7 +211,8 @@ export async function sendQuakeAlert(quake: Quake): Promise<void> {
     `📍 ${quake.place}\n` +
     `📏 Расстояние от Алматы: ${dist} км\n` +
     `🔻 Глубина: ${depth} км\n` +
-    `🕐 ${new Date(quake.time).toLocaleString("ru-KZ", { timeZone: "Asia/Almaty" })}`;
+    `🕐 ${new Date(quake.time).toLocaleString("ru-KZ", { timeZone: "Asia/Almaty" })}\n\n` +
+    `📋 Отправь /during для инструкций`;
 
   const results = await Promise.allSettled(
     chats.map((id) => sendMessage(id, text))
