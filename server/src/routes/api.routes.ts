@@ -1,5 +1,6 @@
 import { Router }          from "express";
 import { tokenService }    from "../services/token.service";
+import { chatService }     from "../services/chat.service";
 import { fetchQuakes }     from "../services/usgs.service";
 import { sendPush }        from "../services/fcm.service";
 import { sendQuakeAlert }  from "../services/telegram.service";
@@ -78,6 +79,14 @@ router.post("/test-telegram", async (req, res) => {
 
   await sendQuakeAlert(fakeQuake);
   res.json({ ok: true });
+});
+
+router.get("/stats", (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  res.json({
+    telegramSubscribers: chatService.all(),
+    fcmTokens: tokenService.count(),
+  });
 });
 
 router.get("/quakes", async (_req, res) => {
