@@ -1,5 +1,3 @@
-// @ts-ignore
-import fetch from "node-fetch";
 import { chatService } from "./chat.service";
 import type { Quake } from "./usgs.service";
 

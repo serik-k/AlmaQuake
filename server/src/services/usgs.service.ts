@@ -1,6 +1,4 @@
 import { config } from "../config";
-// @ts-ignore
-import fetch from "node-fetch";
 
 export interface Quake {
   id:         string;
@@ -41,15 +39,18 @@ export async function fetchQuakes(): Promise<Quake[]> {
   const urlStr = url.toString();
   console.log(`🌐 Запрос к USGS: ${urlStr}`);
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+
   try {
-    // @ts-ignore
     const res = await fetch(urlStr, {
       headers: { 
         "User-Agent": "AlmaQuake App (kz.almaquake.app)",
         "Accept": "application/json"
       },
-      timeout: 15000 // 15 секунд таймаут
+      signal: controller.signal
     });
+    clearTimeout(timeoutId);
 
     if (!res.ok) {
       const text = await res.text().catch(() => "N/A");
@@ -75,7 +76,8 @@ export async function fetchQuakes(): Promise<Quake[]> {
       };
     });
   } catch (err: any) {
-    if (err.name === 'FetchError' && err.type === 'request-timeout') {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
       console.error("⏱️ Тайм-аут запроса к USGS (15с)");
     } else {
       console.error("❌ Ошибка при запросе к USGS:", err.message);
