@@ -52,7 +52,7 @@ router.post("/test-push", async (req, res) => {
   const fakeQuake = {
     id: "test-" + Date.now(),
     magnitude: 6.5,
-    place: "ТЕСТОВОЕ УВЕДОМЛЕНИЕ",
+    place: "ТЕСТОВОЕ УВЕДОМЛЕНИЕ · Алматы",
     time: Date.now(),
     depthKm: 10,
     lat: 43.2565,
