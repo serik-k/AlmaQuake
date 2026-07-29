@@ -2,32 +2,40 @@ import { fetchQuakes }      from "../services/usgs.service";
 import { sendPush }         from "../services/fcm.service";
 import { sendQuakeAlert }   from "../services/telegram.service";
 import { config }           from "../config";
+import { dataFile, readJson, writeJson } from "../services/storage.service";
 
-let lastSeenId: string | null = null;
+const STATE_FILE = dataFile("monitor-state.json");
+let seenIds = new Set(readJson<string[]>(STATE_FILE, []));
+let running = false;
 
 export async function runMonitor(): Promise<void> {
+  if (running) return;
+  running = true;
   try {
     const quakes = await fetchQuakes();
     if (quakes.length === 0) {
-      console.log("ℹ️ Сейсмическая активность в радиусе 100 км не зафиксирована");
+      console.log(`ℹ️ Сейсмическая активность в радиусе ${config.quake.radiusKm} км не зафиксирована`);
       return;
     }
 
-    const latest = quakes[0];
-
-    if (lastSeenId === null) {
-      lastSeenId = latest.id;
-      console.log(`📌 Монитор запущен. Последнее событие: ${latest.id} (M${latest.magnitude})`);
+    if (seenIds.size === 0) {
+      seenIds = new Set(quakes.map((quake) => quake.id));
+      writeJson(STATE_FILE, [...seenIds]);
+      console.log(`📌 Монитор запущен. Последнее событие: ${quakes[0].id} (M${quakes[0].magnitude})`);
       return;
     }
 
-    if (latest.id !== lastSeenId) {
-      console.log(`🌍 ОБНАРУЖЕНО НОВОЕ СОБЫТИЕ: M${latest.magnitude} — ${latest.place}`);
-      lastSeenId = latest.id;
-      await Promise.all([sendPush(latest), sendQuakeAlert(latest)]);
+    const newQuakes = quakes.filter((quake) => !seenIds.has(quake.id)).reverse();
+    for (const quake of newQuakes) {
+      console.log(`🌍 ОБНАРУЖЕНО НОВОЕ СОБЫТИЕ: M${quake.magnitude} — ${quake.place}`);
+      await Promise.all([sendPush(quake), sendQuakeAlert(quake)]);
     }
+    seenIds = new Set(quakes.map((quake) => quake.id));
+    writeJson(STATE_FILE, [...seenIds]);
   } catch (error: any) {
     console.error("⚠️ Сбой мониторинга (повтор через 60с):", error.message || error);
+  } finally {
+    running = false;
   }
 }
 

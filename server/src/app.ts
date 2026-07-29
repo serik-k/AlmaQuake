@@ -5,6 +5,7 @@ import { router }       from "./routes/api.routes";
 import { startMonitorJob } from "./jobs/monitor.job";
 import { startTelegramBot } from "./services/telegram.service";
 import { config }       from "./config";
+import { logStorageConfiguration } from "./services/storage.service";
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use("/api/quakes", quakesLimiter);
 app.use("/api", router);
 
 app.listen(config.port, () => {
+  logStorageConfiguration();
   console.log(`🟢 Сервер на порту ${config.port}`);
   startMonitorJob();
   startTelegramBot();

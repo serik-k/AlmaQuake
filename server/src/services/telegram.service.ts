@@ -80,16 +80,16 @@ const HELP_TEXT = `🌍 <b>AlmaQuake — команды бота</b>
 // ─── Telegram API helpers ─────────────────────────────────────────────────────
 
 async function tgCall(method: string, body: object): Promise<any> {
-  try {
-    const res = await fetch(`${API}/${method}`, {
+  const res = await fetch(`${API}/${method}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    return await res.json();
-  } catch (e) {
-    console.error(`❌ Telegram API error (${method}):`, e);
+  const data = await res.json() as { ok?: boolean; description?: string; result?: unknown };
+  if (!res.ok || !data.ok) {
+    throw new Error(`Telegram ${method}: ${data.description ?? `HTTP ${res.status}`}`);
   }
+  return data;
 }
 
 async function sendMessage(chatId: number, text: string): Promise<void> {
@@ -110,7 +110,7 @@ async function handleCommand(chatId: number, text: string, name: string): Promis
       chatService.add(chatId);
       await sendMessage(
         chatId,
-        `🌍 <b>AlmaQuake</b>\n\nПривет, ${name}! Ты подписан на уведомления о землетрясениях в радиусе 100 км от Алматы (M≥2.5).\n\n${HELP_TEXT}`
+        `🌍 <b>AlmaQuake</b>\n\nПривет, ${name}! Ты подписан на уведомления о землетрясениях в радиусе 300 км от Алматы (M≥2.5).\n\n${HELP_TEXT}`
       );
       console.log(`✅ Telegram подписчик добавлен: ${chatId} (${name})`);
       break;
