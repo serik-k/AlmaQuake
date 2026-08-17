@@ -2,7 +2,6 @@ import { Router }          from "express";
 import { tokenService }    from "../services/token.service";
 import { chatService }     from "../services/chat.service";
 import { fetchQuakes }     from "../services/usgs.service";
-import { sendPush }        from "../services/fcm.service";
 import { sendQuakeAlert }  from "../services/telegram.service";
 
 export const router = Router();
@@ -49,19 +48,7 @@ router.delete("/register", (req, res) => {
 
 router.post("/test-push", async (req, res) => {
   if (!requireAdminKey(req, res)) return;
-  const fakeQuake = {
-    id: "test-" + Date.now(),
-    magnitude: 6.5,
-    place: "ТЕСТОВОЕ УВЕДОМЛЕНИЕ",
-    time: Date.now(),
-    depthKm: 10,
-    lat: 43.2565,
-    lng: 76.9286,
-    distanceKm: 0,
-  };
-
-  await Promise.all([sendPush(fakeQuake), sendQuakeAlert(fakeQuake)]);
-  res.json({ ok: true, fcmTokens: tokenService.count() });
+  res.status(503).json({ error: "FCM push notifications are temporarily disabled" });
 });
 
 router.post("/test-telegram", async (req, res) => {

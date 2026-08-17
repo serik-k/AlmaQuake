@@ -7,6 +7,14 @@ const API = `https://api.telegram.org/bot${TOKEN}`;
 let offset = 0;
 let polling = false;
 
+const BROADCAST_BATCH_SIZE = 25;
+const BROADCAST_BATCH_DELAY_MS = 1_000;
+const MAX_RATE_LIMIT_RETRIES = 3;
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // ─── Тексты инструкций ───────────────────────────────────────────────────────
 
 const SAFETY = {
@@ -79,13 +87,31 @@ const HELP_TEXT = `🌍 <b>AlmaQuake — команды бота</b>
 
 // ─── Telegram API helpers ─────────────────────────────────────────────────────
 
-async function tgCall(method: string, body: object): Promise<any> {
+async function tgCall(
+  method: string,
+  body: object,
+  retriesRemaining = MAX_RATE_LIMIT_RETRIES
+): Promise<any> {
   const res = await fetch(`${API}/${method}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-  const data = await res.json() as { ok?: boolean; description?: string; result?: unknown };
+  const data = await res.json() as {
+    ok?: boolean;
+    error_code?: number;
+    description?: string;
+    result?: unknown;
+    parameters?: { retry_after?: number };
+  };
+  if (
+    data.error_code === 429 &&
+    data.parameters?.retry_after &&
+    retriesRemaining > 0
+  ) {
+    await delay((data.parameters.retry_after + 1) * 1_000);
+    return tgCall(method, body, retriesRemaining - 1);
+  }
   if (!res.ok || !data.ok) {
     throw new Error(`Telegram ${method}: ${data.description ?? `HTTP ${res.status}`}`);
   }
@@ -212,10 +238,18 @@ export async function sendQuakeAlert(quake: Quake): Promise<void> {
     `🕐 ${new Date(quake.time).toLocaleString("ru-KZ", { timeZone: "Asia/Almaty" })}\n\n` +
     `📋 Отправь /during для инструкций`;
 
-  const results = await Promise.allSettled(
-    chats.map((id) => sendMessage(id, text))
-  );
+  let ok = 0;
+  for (let index = 0; index < chats.length; index += BROADCAST_BATCH_SIZE) {
+    const batch = chats.slice(index, index + BROADCAST_BATCH_SIZE);
+    const results = await Promise.allSettled(
+      batch.map((id) => sendMessage(id, text))
+    );
+    ok += results.filter((result) => result.status === "fulfilled").length;
 
-  const ok = results.filter((r) => r.status === "fulfilled").length;
+    if (index + BROADCAST_BATCH_SIZE < chats.length) {
+      await delay(BROADCAST_BATCH_DELAY_MS);
+    }
+  }
+
   console.log(`📨 Telegram: отправлено ${ok}/${chats.length}`);
 }

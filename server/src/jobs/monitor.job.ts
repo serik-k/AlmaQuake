@@ -1,5 +1,4 @@
 import { fetchQuakes }      from "../services/usgs.service";
-import { sendPush }         from "../services/fcm.service";
 import { sendQuakeAlert }   from "../services/telegram.service";
 import { config }           from "../config";
 import { dataFile, readJson, writeJson } from "../services/storage.service";
@@ -14,7 +13,6 @@ export async function runMonitor(): Promise<void> {
   try {
     const quakes = await fetchQuakes();
     if (quakes.length === 0) {
-      console.log(`ℹ️ Сейсмическая активность в радиусе ${config.quake.radiusKm} км не зафиксирована`);
       return;
     }
 
@@ -28,7 +26,7 @@ export async function runMonitor(): Promise<void> {
     const newQuakes = quakes.filter((quake) => !seenIds.has(quake.id)).reverse();
     for (const quake of newQuakes) {
       console.log(`🌍 ОБНАРУЖЕНО НОВОЕ СОБЫТИЕ: M${quake.magnitude} — ${quake.place}`);
-      await Promise.all([sendPush(quake), sendQuakeAlert(quake)]);
+      await sendQuakeAlert(quake);
     }
     seenIds = new Set(quakes.map((quake) => quake.id));
     writeJson(STATE_FILE, [...seenIds]);

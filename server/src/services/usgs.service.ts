@@ -37,7 +37,6 @@ export async function fetchQuakes(): Promise<Quake[]> {
   url.searchParams.set("limit",          String(limit));
 
   const urlStr = url.toString();
-  console.log(`🌐 Запрос к USGS: ${urlStr}`);
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -59,7 +58,6 @@ export async function fetchQuakes(): Promise<Quake[]> {
     }
 
     const data = await res.json() as { features: any[] };
-    console.log(`✅ USGS данные получены. Событий: ${data.features?.length ?? 0}`);
 
     return (data.features ?? []).map((f: any) => {
       const lat = f.geometry.coordinates[1];
