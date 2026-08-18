@@ -1,10 +1,10 @@
-import type { Quake } from '@/src/api/quakes.api';
-import { FilterBar } from '@/src/components/FilterBar';
-import { LanguageSelector } from '@/src/components/LanguageSelector';
-import { QuakeCard } from '@/src/components/QuakeCard';
-import { QuakeDetailSheet } from '@/src/components/QuakeDetailSheet';
-import { SeismographAnimation } from '@/src/components/SeismographAnimation';
-import { SkeletonCard } from '@/src/components/SkeletonCard';
+import type { Quake } from '@/src/types/quake.types';
+import { FilterBar } from '@/src/components/quake/FilterBar';
+import { LanguageSelector } from '@/src/components/common/LanguageSelector';
+import { QuakeCard } from '@/src/components/quake/QuakeCard';
+import { QuakeDetailSheet } from '@/src/components/quake/QuakeDetailSheet';
+import { SeismographAnimation } from '@/src/components/quake/SeismographAnimation';
+import { SkeletonCard } from '@/src/components/common/SkeletonCard';
 import { useFilter } from '@/src/hooks/useFilter';
 import { useQuakes } from '@/src/hooks/useQuakes';
 import { BlurView } from 'expo-blur';

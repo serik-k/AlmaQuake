@@ -1,4 +1,4 @@
-import { SOSButton } from '@/src/components/SOSButton';
+import { SOSButton } from '@/src/components/common/SOSButton';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -137,4 +137,3 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
 });
-

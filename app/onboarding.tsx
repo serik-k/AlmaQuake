@@ -11,8 +11,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SeismographAnimation } from '@/src/components/SeismographAnimation';
-import { LanguageSelector } from '@/src/components/LanguageSelector';
+import { SeismographAnimation } from '@/src/components/quake/SeismographAnimation';
+import { LanguageSelector } from '@/src/components/common/LanguageSelector';
 import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');

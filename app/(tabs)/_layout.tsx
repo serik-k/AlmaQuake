@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { HapticTab } from '@/src/components/ui/HapticTab';
+import { IconSymbol } from '@/src/components/ui/IconSymbol';
 
 export default function TabLayout() {
   const { t } = useTranslation();

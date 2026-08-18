@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
-import { getQuakes, type Quake } from '../api/quakes.api';
+import { getQuakes } from '../api/quakes.api';
+import type { Quake } from '../types/quake.types';
 
 const POLL_MS = 60_000;
 const STORAGE_KEY = '@quakes_cache';

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import type { Quake } from '../api/quakes.api';
+import type { Quake } from '../types/quake.types';
 
 export type SortKey = 'time' | 'magnitude' | 'distance';
 export type MinMag = 1.0 | 2.5 | 3.5 | 5.0;
