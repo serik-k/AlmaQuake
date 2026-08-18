@@ -10,6 +10,7 @@ import { logger } from "./utils/logger.utils";
 import { registerGracefulShutdown } from "./utils/shutdown";
 
 const app = express();
+const isProduction = process.env.NODE_ENV === "production";
 
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim()).filter(Boolean)
@@ -17,7 +18,7 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
 
 const isAllowedOrigin = (origin?: string): boolean => {
   if (!origin) return true;
-  if (origin.startsWith("exp://")) return true;
+  if (!isProduction && origin.startsWith("exp://")) return true;
   return ALLOWED_ORIGINS.includes(origin);
 };
 
