@@ -1,5 +1,7 @@
 # AlmaQuake
 
+[English](README.md) | [Русский](README.ru.md)
+
 <p align="center">
   <img src="assets/images/icon.png" alt="AlmaQuake app icon" width="128" />
 </p>

@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+# Local AI assistant settings
+.claude/
+
 # Expo
 .expo/
 dist/
