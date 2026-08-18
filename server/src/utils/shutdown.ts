@@ -1,12 +1,16 @@
 import type { Server } from "node:http";
 import { logger } from "./logger.utils";
 
-export const registerGracefulShutdown = (server: Server): void => {
+export const registerGracefulShutdown = (
+  server: Server,
+  cleanup: () => void = () => undefined
+): void => {
   let shuttingDown = false;
 
   const shutdown = (signal: string): void => {
     if (shuttingDown) return;
     shuttingDown = true;
+    cleanup();
 
     logger.info(`Received ${signal}; shutting down gracefully`);
 
