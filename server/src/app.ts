@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { apiRouter } from "./routes";
 import { errorHandlerMiddleware } from "./middlewares/errorHandler.middleware";
-import { startMonitorJob } from "./jobs/monitor.job";
+import { startMonitorJob, stopMonitorJob } from "./jobs/monitor.job";
 import { startTelegramBot } from "./services/telegram.service";
 import { config } from "./config";
 import { logStorageConfiguration } from "./services/storage.service";
@@ -41,6 +41,6 @@ const server = app.listen(config.port, () => {
   startTelegramBot();
 });
 
-registerGracefulShutdown(server);
+registerGracefulShutdown(server, stopMonitorJob);
 
 export default app;
