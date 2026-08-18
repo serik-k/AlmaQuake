@@ -385,6 +385,8 @@ const resources = {
   },
 };
 
+// i18next's default instance intentionally exposes the plugin registration API.
+// eslint-disable-next-line import/no-named-as-default-member
 i18n.use(initReactI18next).init({
   resources,
   lng: 'ru',

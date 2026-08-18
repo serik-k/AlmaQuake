@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
-const BARS = 24;
 const BAR_WIDTH = 3;
 const BAR_GAP = 3;
 

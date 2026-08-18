@@ -16,7 +16,6 @@ function getSeverity(mag: number): { color: string; bg: string; key: string } {
   return { color: '#00E676', bg: '#002A14', key: 'low' };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function formatTimeAgo(ms: number, t: (k: string, opts?: any) => string): string {
   const diff = Date.now() - ms;
   const minutes = Math.floor(diff / 60_000);

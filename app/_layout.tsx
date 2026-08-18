@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import 'expo-dev-client';
 
 import i18n from '@/src/i18n';
-import '@/src/i18n';
 import { setupNotifications } from '@/src/notifications/setup';
 import { ToastProvider } from '@/src/context/ToastContext';
 
@@ -66,7 +65,7 @@ export default function RootLayout() {
     if (ready && needsOnboarding) {
       router.replace('/onboarding');
     }
-  }, [ready, needsOnboarding]);
+  }, [ready, needsOnboarding, router]);
 
   if (!ready) return null;
 

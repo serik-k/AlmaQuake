@@ -25,16 +25,6 @@ function getSeverityColor(mag: number): string {
   return '#00E676';
 }
 
-function formatDate(ms: number): string {
-  return new Date(ms).toLocaleString('ru-RU', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
 export function QuakeDetailSheet({ quake, onClose }: Props) {
   const { t, i18n } = useTranslation();
   const translateY = useRef(new Animated.Value(500)).current;
@@ -72,7 +62,7 @@ export function QuakeDetailSheet({ quake, onClose }: Props) {
         Animated.timing(backdropOpacity, { toValue: 0, duration: 250, useNativeDriver: true }),
       ]).start();
     }
-  }, [quake]);
+  }, [backdropOpacity, quake, translateY]);
 
   const handleClose = () => {
     Animated.parallel([
