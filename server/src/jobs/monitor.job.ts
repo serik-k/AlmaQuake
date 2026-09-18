@@ -1,5 +1,6 @@
 import { fetchQuakes } from "../services/usgs.service";
 import { sendQuakeAlert } from "../services/telegram.service";
+import { sendPush } from "../services/fcm.service";
 import { config } from "../config";
 import { dataFile, readJson, writeJson } from "../services/storage.service";
 import { logger } from "../utils/logger.utils";
@@ -34,6 +35,7 @@ export async function runMonitor(): Promise<void> {
     for (const quake of newQuakes) {
       logger.info(`New earthquake detected: M${quake.magnitude} — ${quake.place}`);
       await sendQuakeAlert(quake);
+      await sendPush(quake);
     }
 
     rememberLatest(quakes.map((quake) => quake.id));
